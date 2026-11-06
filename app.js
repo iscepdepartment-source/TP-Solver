@@ -297,9 +297,10 @@
       lastOperator: null,
       lastOperand: null
     };
-    let layoutSaveTimeout = null;
     let drag = null;
     let resizeDrag = null;
+    let launcherDrag = null;
+    let launcherMoved = false;
     let lastVisibleRect = null;
     let lastExpandedRect = null;
 
@@ -313,27 +314,26 @@
       }
     };
     const saveLayout = () => {
-      window.clearTimeout(layoutSaveTimeout);
-      layoutSaveTimeout = window.setTimeout(() => {
-        const rect = panel.hidden && lastVisibleRect ? lastVisibleRect : panel.getBoundingClientRect();
-        if (!panel.hidden) lastVisibleRect = rect;
-        if (!panel.hidden && !panel.classList.contains('is-minimized')) lastExpandedRect = rect;
-        const sizeRect = panel.classList.contains('is-minimized') && lastExpandedRect
-          ? lastExpandedRect
-          : rect;
-        try {
-          localStorage.setItem(stateKey, JSON.stringify({
-            left: Math.round(rect.left),
-            top: Math.round(rect.top),
-            width: Math.round(sizeRect.width),
-            height: Math.round(sizeRect.height),
-            minimized: panel.classList.contains('is-minimized'),
-            closed: panel.hidden
-          }));
-        } catch (error) {
-          console.warn('Calculator settings could not be saved in this browser.');
-        }
-      }, 120);
+      const rect = panel.hidden && lastVisibleRect ? lastVisibleRect : panel.getBoundingClientRect();
+      if (!panel.hidden) lastVisibleRect = rect;
+      if (!panel.hidden && !panel.classList.contains('is-minimized')) lastExpandedRect = rect;
+      const sizeRect = panel.classList.contains('is-minimized') && lastExpandedRect
+        ? lastExpandedRect
+        : rect;
+      try {
+        localStorage.setItem(stateKey, JSON.stringify({
+          left: Math.round(rect.left),
+          top: Math.round(rect.top),
+          width: Math.round(sizeRect.width),
+          height: Math.round(sizeRect.height),
+          launcherLeft: launcher.style.left ? Math.round(launcher.getBoundingClientRect().left) : null,
+          launcherTop: launcher.style.top ? Math.round(launcher.getBoundingClientRect().top) : null,
+          minimized: panel.classList.contains('is-minimized'),
+          closed: panel.hidden
+        }));
+      } catch (error) {
+        console.warn('Calculator settings could not be saved in this browser.');
+      }
     };
     const showExpression = (value) => {
       state.expression = value;
@@ -516,6 +516,12 @@
       panel.style.bottom = 'auto';
     }
     setMinimized(saved.minimized === true);
+    if (Number.isFinite(saved.launcherLeft) && Number.isFinite(saved.launcherTop)) {
+      launcher.style.left = Math.max(0, Math.min(saved.launcherLeft, window.innerWidth - 54)) + 'px';
+      launcher.style.top = Math.max(0, Math.min(saved.launcherTop, window.innerHeight - 54)) + 'px';
+      launcher.style.right = 'auto';
+      launcher.style.bottom = 'auto';
+    }
 
     panel.addEventListener('click', (event) => {
       const button = event.target.closest('button');
@@ -532,12 +538,42 @@
       launcher.focus();
     });
     launcher.addEventListener('click', () => {
+      if (launcherMoved) {
+        launcherMoved = false;
+        return;
+      }
       panel.hidden = false;
       launcher.hidden = true;
       if (panel.classList.contains('is-minimized')) setMinimized(false);
       saveLayout();
       $('#calculatorMinimize').focus();
     });
+    launcher.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      const rect = launcher.getBoundingClientRect();
+      launcherDrag = { pointerId: event.pointerId, x: event.clientX - rect.left, y: event.clientY - rect.top };
+      launcherMoved = false;
+      launcher.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    });
+    launcher.addEventListener('pointermove', (event) => {
+      if (!launcherDrag || launcherDrag.pointerId !== event.pointerId) return;
+      const left = Math.max(0, Math.min(event.clientX - launcherDrag.x, window.innerWidth - launcher.offsetWidth));
+      const top = Math.max(0, Math.min(event.clientY - launcherDrag.y, window.innerHeight - launcher.offsetHeight));
+      if (Math.abs(left - launcher.getBoundingClientRect().left) > 2 ||
+          Math.abs(top - launcher.getBoundingClientRect().top) > 2) launcherMoved = true;
+      launcher.style.left = left + 'px';
+      launcher.style.top = top + 'px';
+      launcher.style.right = 'auto';
+      launcher.style.bottom = 'auto';
+    });
+    const finishLauncherDrag = (event) => {
+      if (!launcherDrag || launcherDrag.pointerId !== event.pointerId) return;
+      launcherDrag = null;
+      saveLayout();
+    };
+    launcher.addEventListener('pointerup', finishLauncherDrag);
+    launcher.addEventListener('pointercancel', finishLauncherDrag);
     $('#calculatorMinimize').addEventListener('click', () => {
       setMinimized(!panel.classList.contains('is-minimized'));
     });
@@ -636,6 +672,14 @@
       const rect = panel.getBoundingClientRect();
       if (panel.style.left) panel.style.left = Math.max(0, Math.min(rect.left, window.innerWidth - panel.offsetWidth)) + 'px';
       if (panel.style.top) panel.style.top = Math.max(0, Math.min(rect.top, window.innerHeight - panel.offsetHeight)) + 'px';
+      if (launcher.style.left) launcher.style.left = Math.max(0, Math.min(
+        launcher.getBoundingClientRect().left,
+        window.innerWidth - launcher.offsetWidth
+      )) + 'px';
+      if (launcher.style.top) launcher.style.top = Math.max(0, Math.min(
+        launcher.getBoundingClientRect().top,
+        window.innerHeight - launcher.offsetHeight
+      )) + 'px';
       saveLayout();
     });
     if (window.ResizeObserver) new ResizeObserver(saveLayout).observe(panel);
