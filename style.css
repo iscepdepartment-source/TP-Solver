@@ -21,6 +21,71 @@ body {
   font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
 }
 
+.intro-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(145deg, #0b2a6b, #123a8c);
+  color: #fff;
+  opacity: 1;
+  transition: opacity .45s ease;
+}
+.intro-splash[hidden] { display: none; }
+.intro-splash.is-leaving { opacity: 0; pointer-events: none; }
+.intro-brand { width: min(460px, 82vw); text-align: center; }
+.intro-truck-track {
+  position: relative;
+  height: 74px;
+  margin-bottom: 18px;
+}
+.intro-truck {
+  position: absolute;
+  z-index: 1;
+  top: 5px;
+  left: 0;
+  color: var(--gold);
+  font-size: 3rem;
+  animation: intro-truck-drive 1.7s cubic-bezier(.4, 0, .2, 1) both;
+}
+.intro-road {
+  position: absolute;
+  right: 0;
+  bottom: 13px;
+  left: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.55) 0 18px, transparent 18px 32px);
+  animation: intro-road-move .45s linear infinite;
+}
+.intro-title {
+  color: #fff;
+  font-size: clamp(2.4rem, 8vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: .04em;
+  line-height: 1;
+  animation: intro-title-appear .6s .35s ease both;
+}
+.intro-subtitle {
+  margin-top: 12px;
+  color: #f8dc7a;
+  font-size: .95rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  animation: intro-title-appear .6s .55s ease both;
+}
+@keyframes intro-truck-drive {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(min(460px, 82vw) - 3.5rem)); }
+}
+@keyframes intro-road-move { to { background-position: -32px 0; } }
+@keyframes intro-title-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 
 .sidebar {
   position: fixed; top: 0; left: 0; bottom: 0; width: 240px;
@@ -439,6 +504,8 @@ body {
   to { transform: translateY(190px) rotate(260deg); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .intro-splash { transition: none; }
+  .intro-truck, .intro-road, .intro-title, .intro-subtitle,
   .practice-cost-hint, .practice-flow-line, .practice-celebration, .practice-confetti span { animation: none; }
 }
 

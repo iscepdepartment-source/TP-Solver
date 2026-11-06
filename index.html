@@ -20,6 +20,16 @@
 </head>
 <body>
 
+<section class="intro-splash" id="introSplash" role="status" aria-label="TP-Solver intro">
+  <div class="intro-brand">
+    <div class="intro-truck-track" aria-hidden="true">
+      <i class="bi bi-truck intro-truck"></i>
+      <span class="intro-road"></span>
+    </div>
+    <div class="intro-title">TP-Solver</div>
+    <div class="intro-subtitle">Least Cost Method</div>
+  </div>
+</section>
 
 <aside class="sidebar" id="sidebar">
   <div class="brand">
@@ -448,5 +458,26 @@
 <script src="app.js"></script>
 <script src="chatbot.js"></script>
 <script src="practice.js"></script>
+<script>
+  (function () {
+    const splash = document.querySelector('#introSplash');
+    const introKey = 'tp_solver_intro_seen';
+    try {
+      if (sessionStorage.getItem(introKey) === 'true') {
+        splash.hidden = true;
+        return;
+      }
+      sessionStorage.setItem(introKey, 'true');
+    } catch (error) {
+      // Play the intro if session storage is unavailable.
+    }
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.setTimeout(() => {
+      splash.classList.add('is-leaving');
+      window.setTimeout(() => { splash.hidden = true; }, reducedMotion ? 0 : 450);
+    }, reducedMotion ? 100 : 2100);
+  })();
+</script>
 </body>
 </html>
