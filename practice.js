@@ -22,8 +22,8 @@
     {
       title: ['Emergency food delivery', 'Paghahatid ng pagkain para sa emergency'],
       text: [
-        'A relief agency must ship food boxes from {sourcePlaces} to {destinationPlaces}. Rows S1–S4 represent the warehouses, and columns D1–D5 represent the evacuation centers. The matrix shows each warehouse’s available boxes and each center’s required boxes. The cost in each route is the cost to ship one box. Use the Least Cost Method to plan the shipments, check whether total supply and demand balance, and decide how to handle any difference.',
-        'Kailangang maghatid ang isang relief agency ng mga kahon ng pagkain mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows S1–S4 ay ang mga warehouse, at ang columns D1–D5 ay ang mga evacuation center. Makikita sa matrix ang dami ng kahon sa bawat warehouse at ang kailangan ng bawat center. Ang cost sa bawat ruta ay bayad sa pagpapadala ng isang kahon. Gamitin ang Least Cost Method para magplano ng shipments, suriin kung balance ang total supply at demand, at pag-isipan kung paano haharapin ang anumang diperensya.'
+        'A relief agency must ship food boxes from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory4 represent the warehouses, and columns City1–City5 represent the evacuation centers. The matrix shows each warehouse’s available boxes and each center’s required boxes. The cost in each route is the cost to ship one box. Use the Least Cost Method to plan the shipments, check whether total supply and demand balance, and calculate the total least cost.',
+        'Kailangang maghatid ang isang relief agency ng mga kahon ng pagkain mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory4 ay ang mga warehouse, at ang columns City1–City5 ay ang mga evacuation center. Makikita sa matrix ang dami ng kahon sa bawat warehouse at ang kailangan ng bawat center. Ang cost sa bawat ruta ay bayad sa pagpapadala ng isang kahon. Gamitin ang Least Cost Method para magplano ng shipments, suriin kung balance ang total supply at demand, at kuwentahin ang kabuuang least cost.'
       ],
       sourcePlaces: ['four regional warehouses', 'apat na regional warehouses'],
       destinationPlaces: ['five evacuation centers', 'limang evacuation centers']
@@ -31,8 +31,8 @@
     {
       title: ['Fresh produce distribution', 'Pamamahagi ng sariwang ani'],
       text: [
-        'A growers’ cooperative needs to send crates of fresh produce from {sourcePlaces} to {destinationPlaces}. Rows S1–S4 represent farms, and columns D1–D5 represent markets. The matrix lists each farm’s available crates and each market’s requested crates. Each route cost is the expense of sending one crate. Find a shipment plan with the Least Cost Method, compare total supply and demand, and account for any surplus or shortage.',
-        'Kailangang magpadala ang isang samahan ng mga magsasaka ng crates ng sariwang ani mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows S1–S4 ay ang mga farm, at ang columns D1–D5 ay ang mga market. Nasa matrix ang available na crates ng bawat farm at ang hinihingi ng bawat market. Ang route cost ay gastos sa pagpapadala ng isang crate. Bumuo ng shipment plan gamit ang Least Cost Method, ikumpara ang total supply at demand, at isaalang-alang ang anumang sobra o kakulangan.'
+        'A growers’ cooperative needs to send crates of fresh produce from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory4 represent farms, and columns City1–City5 represent markets. The matrix lists each farm’s available crates and each market’s requested crates. Each route cost is the expense of sending one crate. Find a shipment plan with the Least Cost Method, compare total supply and demand, and calculate the total least cost.',
+        'Kailangang magpadala ang isang samahan ng mga magsasaka ng crates ng sariwang ani mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory4 ay ang mga farm, at ang columns City1–City5 ay ang mga market. Nasa matrix ang available na crates ng bawat farm at ang hinihingi ng bawat market. Ang route cost ay gastos sa pagpapadala ng isang crate. Bumuo ng shipment plan gamit ang Least Cost Method, ikumpara ang total supply at demand, at kuwentahin ang kabuuang least cost.'
       ],
       sourcePlaces: ['four nearby farms', 'apat na kalapit na farm'],
       destinationPlaces: ['five local markets', 'limang lokal na market']
@@ -40,8 +40,8 @@
     {
       title: ['Medical supply delivery', 'Paghahatid ng medical supplies'],
       text: [
-        'A health network must distribute medical supply kits from {sourcePlaces} to {destinationPlaces}. Rows S1–S4 represent distribution hubs, and columns D1–D5 represent community clinics. The matrix lists the available kits at each hub and the requested kits at each clinic. Each route cost is the cost to deliver one kit. Use the Least Cost Method to determine the allocations, then assess whether the total supply matches total demand.',
-        'Kailangang ipamahagi ng isang health network ang medical supply kits mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows S1–S4 ay ang distribution hubs, at ang columns D1–D5 ay ang community clinics. Nasa matrix ang available na kits sa bawat hub at ang hinihinging kits ng bawat clinic. Ang route cost ay gastos sa paghahatid ng isang kit. Gamitin ang Least Cost Method para tukuyin ang mga allocation, at suriin kung magkapantay ang total supply at demand.'
+        'A health network must distribute medical supply kits from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory4 represent distribution hubs, and columns City1–City5 represent community clinics. The matrix lists the available kits at each hub and the requested kits at each clinic. Each route cost is the cost to deliver one kit. Use the Least Cost Method to determine the allocations, then calculate the total least cost.',
+        'Kailangang ipamahagi ng isang health network ang medical supply kits mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory4 ay ang distribution hubs, at ang columns City1–City5 ay ang community clinics. Nasa matrix ang available na kits sa bawat hub at ang hinihinging kits ng bawat clinic. Ang route cost ay gastos sa paghahatid ng isang kit. Gamitin ang Least Cost Method para tukuyin ang mga allocation at kuwentahin ang kabuuang least cost.'
       ],
       sourcePlaces: ['four distribution hubs', 'apat na distribution hubs'],
       destinationPlaces: ['five community clinics', 'limang community clinics']
@@ -49,8 +49,8 @@
     {
       title: ['School supply shipments', 'Mga shipment ng school supplies'],
       text: [
-        'A school program is sending learning kits from {sourcePlaces} to {destinationPlaces}. Rows S1–S4 represent supply depots, and columns D1–D5 represent public schools. The matrix shows the kits available at each depot and the number requested at each school. Each route cost is the cost of shipping one kit. Apply the Least Cost Method to plan the shipments and decide how to treat any imbalance between supply and demand.',
-        'Nagpapadala ang isang school program ng learning kits mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows S1–S4 ay ang supply depots, at ang columns D1–D5 ay ang public schools. Ipinapakita ng matrix ang available na kits sa bawat depot at ang daming hinihingi ng bawat school. Ang route cost ay gastos sa pagpapadala ng isang kit. Gamitin ang Least Cost Method para planuhin ang shipments at magpasya kung paano haharapin ang anumang hindi pagtutugma ng supply at demand.'
+        'A school program is sending learning kits from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory4 represent supply depots, and columns City1–City5 represent public schools. The matrix shows the kits available at each depot and the number requested at each school. Each route cost is the cost of shipping one kit. Apply the Least Cost Method to plan the shipments, account for any imbalance between supply and demand, and calculate the total least cost.',
+        'Nagpapadala ang isang school program ng learning kits mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory4 ay ang supply depots, at ang columns City1–City5 ay ang public schools. Ipinapakita ng matrix ang available na kits sa bawat depot at ang daming hinihingi ng bawat school. Ang route cost ay gastos sa pagpapadala ng isang kit. Gamitin ang Least Cost Method para planuhin ang shipments, isaalang-alang ang hindi pagtutugma ng supply at demand, at kuwentahin ang kabuuang least cost.'
       ],
       sourcePlaces: ['four supply depots', 'apat na supply depots'],
       destinationPlaces: ['five public schools', 'limang public schools']
@@ -61,7 +61,7 @@
     intro: ['Choose a difficulty and generate a new transportation problem. Enter allocations using the Least Cost Method, then check your work.', 'Pumili ng antas at bumuo ng bagong problema sa transportasyon. Ilagay ang mga alokasyon gamit ang Least Cost Method, pagkatapos ay suriin ang sagot.'],
     currencyLabel: ['Currency sign', 'Simbolo ng pera'],
     levelProgress: ['Difficulty progression', 'Pag-usad sa mga antas'],
-    unlockHelp: ['Complete 20 problems in each level to unlock the next level. Progress is saved on this device.', 'Sagutan nang tama ang 20 problema sa bawat antas upang mabuksan ang susunod. Naka-save ang progreso sa device na ito.'],
+    unlockHelp: ['All difficulty levels are available now. Progress is saved on this device.', 'Available na ngayon ang lahat ng antas ng kahirapan. Naka-save ang progreso sa device na ito.'],
     progressAria: ['Progress for the current difficulty level', 'Pag-usad sa kasalukuyang antas ng kahirapan'],
     progressText: ['{level}: {count} of 20 completed · {total} total', '{level}: {count} sa 20 ang natapos · {total} lahat'],
     analyticsTitle: ['Practice Performance', 'Performance sa Pagsasanay'],
@@ -111,7 +111,6 @@
     easyName: ['Easy', 'Madali'],
     mediumName: ['Medium', 'Katamtaman'],
     hardName: ['Hard', 'Mahirap'],
-    lockedLevel: ['Complete 20 {level} problems to unlock this level.', 'Sagutan nang tama ang 20 problemang {level} upang mabuksan ang antas na ito.'],
     difficultyLabel: ['Difficulty level', 'Antas ng kahirapan'],
     easy: ['Easy — small balanced', 'Madali — maliit at balanse'],
     medium: ['Medium — larger balanced', 'Katamtaman — mas malaki at balanse'],
@@ -119,8 +118,8 @@
     generate: ['Generate Problem', 'Bumuo ng Problema'],
     clear: ['Clear Allocations', 'Burahin ang mga Alokasyon'],
     easyHelp: ['Easy generates a balanced 2×3 or 3×3 problem.', 'Bumubuo ang Madali ng balanseng 2×3 o 3×3 na problema.'],
-    mediumHelp: ['Medium generates a balanced 3×4 problem.', 'Bumubuo ang Katamtaman ng balanseng 3×4 na problema.'],
-    hardHelp: ['Hard includes a real-world story and an unbalanced 4×5 transportation problem. Solve it yourself; ask for a hint if needed.', 'May real-world na kuwento at hindi balanseng 4×5 transportation problem ang Mahirap. Ikaw ang sumagot; humingi ng clue kung kailangan.'],
+    mediumHelp: ['Medium generates a balanced 3×4 problem. After completing the allocation table, multiply each shipment quantity by its unit cost and add the products to find the total least cost.', 'Bumubuo ang Katamtaman ng balanseng 3×4 na problema. Pagkatapos kumpletuhin ang allocation table, i-multiply ang dami ng bawat shipment sa unit cost nito at idagdag ang mga produkto para makuha ang kabuuang least cost.'],
+    hardHelp: ['Hard includes a real-world story and an unbalanced 4×5 transportation problem. Complete the allocation table, calculate each shipment cost, then add the products to find the total least cost.', 'May real-world na kuwento at hindi balanseng 4×5 transportation problem ang Mahirap. Kumpletuhin ang allocation table, kuwentahin ang gastos ng bawat shipment, at idagdag ang mga produkto para makuha ang kabuuang least cost.'],
     problem: ['Practice Problem', 'Problema sa Pagsasanay'],
     matrixHelp: ['Costs are shaded from low (green) to high (red). Enter a shipment quantity in each cell.', 'May kulay ang gastos: berde ang mababa at pula ang mataas. Maglagay ng dami ng padala sa bawat cell.'],
     heatmapLegend: ['Unit cost heatmap:', 'Heatmap ng gastos bawat yunit:'],
@@ -143,13 +142,24 @@
     invalidAmounts: ['Allocations must be non-negative whole numbers. Correct the entries before checking.', 'Dapat ay hindi negatibong buong bilang ang mga alokasyon. Ayusin muna ang mga inilagay bago suriin.'],
     hintTie: ['Several active cells tie for the lowest cost. Using the top-to-bottom, left-to-right tie rule, choose {cell} at {cost}. Remaining supply is {supply} and remaining demand is {demand}; choose the smaller amount.', 'Tabla ang pinakamababang gastos sa ilang aktibong cell. Ayon sa panuntunang itaas-pababa at kaliwa-pakanan, piliin ang {cell} sa halagang {cost}. Natitirang supply ay {supply} at natitirang demand ay {demand}; piliin ang mas maliit na halaga.'],
     remaining: ['Remaining supply: {supply}. Remaining demand: {demand}.', 'Natitirang supply: {supply}. Natitirang demand: {demand}.'],
-    remainingSource: ['S{index}: {amount}', 'S{index}: {amount}'],
-    remainingDestination: ['D{index}: {amount}', 'D{index}: {amount}'],
+    remainingSource: ['Factory{index}: {amount}', 'Factory{index}: {amount}'],
+    remainingDestination: ['City{index}: {amount}', 'City{index}: {amount}'],
+    costWorkTitle: ['Calculate the Total Least Cost', 'Kuwentahin ang Kabuuang Least Cost'],
+    costWorkHelp: ['For each correct shipment, multiply its unit cost by its shipment quantity. Then add the products and enter the total least cost.', 'Para sa bawat tamang shipment, i-multiply ang unit cost sa dami ng shipment. Pagkatapos, idagdag ang mga produkto at ilagay ang kabuuang least cost.'],
+    costWorkRoute: ['Route', 'Ruta'],
+    costWorkUnitCost: ['Unit cost', 'Gastos bawat yunit'],
+    costWorkQuantity: ['Shipment quantity', 'Dami ng shipment'],
+    costWorkProduct: ['Unit cost × quantity', 'Gastos bawat yunit × dami'],
+    totalLeastCost: ['Total least cost', 'Kabuuang least cost'],
+    checkCostWork: ['Check calculations', 'Suriin ang mga kalkulasyon'],
+    costWorkIncomplete: ['Enter a product for every shipment and the total least cost.', 'Ilagay ang produkto para sa bawat shipment at ang kabuuang least cost.'],
+    costWorkIncorrect: ['Some calculations are incorrect. Recheck each multiplication and the sum of all products.', 'May ilang maling kalkulasyon. Suriin muli ang bawat multiplication at ang suma ng lahat ng produkto.'],
+    costWorkCorrect: ['Correct! Every shipment cost and the total least cost are correct.', 'Tama! Tama ang gastos ng bawat shipment at ang kabuuang least cost.'],
     correct: ['Excellent! Every allocation matches the Least Cost Method solution.', 'Magaling! Tugma ang lahat ng alokasyon sa solusyon ng Least Cost Method.'],
     congratsTitle: ['Great job!', 'Magaling!'],
     congratsMessage: ['Problem complete! You have solved {count} of 20 {level} problems.', 'Tapos na ang problema! Nakumpleto mo na ang {count} sa 20 problemang {level}.'],
     levelCompleteTitle: ['Level complete!', 'Tapos na ang antas!'],
-    levelCompleteMessage: ['You completed all 20 {level} problems. {next} is now unlocked!', 'Natapos mo ang lahat ng 20 problemang {level}. Bukas na ang {next}!'],
+    levelCompleteMessage: ['You completed all 20 {level} problems!', 'Natapos mo ang lahat ng 20 problemang {level}!'],
     allLevelsCompleteMessage: ['You completed all 20 problems in every difficulty. Keep practicing with new Hard problems!', 'Natapos mo ang 20 problema sa bawat antas. Magpatuloy sa pagsasanay gamit ang mga bagong problemang Mahirap!'],
     nextProblem: ['Next Problem', 'Susunod na Problema'],
     startNextLevel: ['Start {level}', 'Simulan ang {level}'],
@@ -232,6 +242,9 @@
   };
   const fmt = (value) => Number(value).toLocaleString('en-US', { maximumFractionDigits: 4 });
   const fmtMoney = (value) => (currencySigns[$('#practiceCurrency').value] || '$') + fmt(value);
+  const updateCostCurrencySign = () => {
+    $('#practiceCostCurrencySign').textContent = currencySigns[$('#practiceCurrency').value] || '$';
+  };
   const interpolate = (message, values) => message.replace(/\{(\w+)\}/g, (_, key) => values[key]);
   const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -424,6 +437,8 @@
     $('#practiceTimerValue').textContent = formatDuration(entry.durationMs);
     $('#practiceHintMessage').hidden = true;
     $('#practiceFeedback').hidden = true;
+    $('#practiceCostWork').hidden = true;
+    $('#practiceCostFeedback').hidden = true;
     $('#practiceCelebration').hidden = true;
     $('#practiceShowSolution').hidden = true;
     $('#practiceSolution').hidden = false;
@@ -617,25 +632,15 @@
     return index >= 0 && index < LEVELS.length - 1 ? LEVELS[index + 1] : null;
   }
 
-  function getUnlockedThrough() {
-    if (progress.easy < LEVEL_TARGET) return 0;
-    if (progress.medium < LEVEL_TARGET) return 1;
-    return 2;
-  }
-
   function levelName(level) {
     return tr(level + 'Name');
   }
 
   function updateProgressUi() {
     const select = $('#practiceDifficulty');
-    const selectedLevel = select.value;
-    const unlockedThrough = getUnlockedThrough();
-    LEVELS.forEach((level, index) => {
-      const option = select.querySelector('option[value="' + level + '"]');
-      option.disabled = index > unlockedThrough;
+    LEVELS.forEach((level) => {
+      select.querySelector('option[value="' + level + '"]').disabled = false;
     });
-    if (LEVELS.indexOf(selectedLevel) > unlockedThrough) select.value = LEVELS[unlockedThrough];
 
     const level = select.value;
     const count = progress[level];
@@ -957,16 +962,8 @@
     reviewMode = false;
     allocationFeedbackVisible = false;
     $('#practiceReviewBanner').hidden = true;
-    let difficulty = $('#practiceDifficulty').value;
-    if (LEVELS.indexOf(difficulty) > getUnlockedThrough()) {
-      difficulty = LEVELS[getUnlockedThrough()];
-      $('#practiceDifficulty').value = difficulty;
-      $('#practiceDifficultyHelp').textContent = interpolate(tr('lockedLevel'), {
-        level: levelName(difficulty)
-      });
-    } else {
-      $('#practiceDifficultyHelp').textContent = tr(difficulty + 'Help');
-    }
+    const difficulty = $('#practiceDifficulty').value;
+    $('#practiceDifficultyHelp').textContent = tr(difficulty + 'Help');
     practice = makeProblem(difficulty);
     hintedCell = null;
     revealedCells = new Set();
@@ -976,6 +973,8 @@
     $('#practiceFlowPanel').classList.remove('d-none');
     $('#practiceHintMessage').hidden = true;
     $('#practiceFeedback').hidden = true;
+    $('#practiceCostWork').hidden = true;
+    $('#practiceCostFeedback').hidden = true;
     $('#practiceCelebration').hidden = true;
     $('#practiceShowSolution').hidden = true;
     $('#practiceShowSolution').textContent = tr('showSolution');
@@ -1011,8 +1010,7 @@
     if (progress[level] === LEVEL_TARGET && nextLevel) {
       title.textContent = tr('levelCompleteTitle');
       message.textContent = interpolate(tr('levelCompleteMessage'), {
-        level: levelName(level),
-        next: levelName(nextLevel)
+        level: levelName(level)
       });
       nextButtonLabel.textContent = interpolate(tr('startNextLevel'), {
         level: levelName(nextLevel)
@@ -1054,6 +1052,9 @@
     updateProgressUi();
     renderPoints();
     $$('.practice-allocation').forEach((input) => { input.disabled = true; });
+    $$('.practice-cost-answer').forEach((input) => { input.disabled = true; });
+    $('#practiceTotalCostAnswer').disabled = true;
+    $('#practiceCheckCost').disabled = true;
     $('#practiceHint').disabled = true;
     $('#practiceCheck').disabled = true;
     $('#practiceReset').disabled = true;
@@ -1187,13 +1188,69 @@
       $('#practiceShowSolution').hidden = true;
       $('#practiceShowSolution').textContent = tr('showSolution');
       $('#practiceSolution').hidden = true;
-      if (!completedCurrent) celebrateCompletion();
+      if (practice.difficulty === 'easy') {
+        if (!completedCurrent) celebrateCompletion();
+      } else {
+        if ($('#practiceCostWork').hidden) renderCostWork();
+        $('#practiceCostWork').hidden = false;
+      }
     } else {
       feedback.textContent = practice.difficulty === 'hard'
         ? tr('incorrectHard')
         : interpolate(tr('incorrect'), { count: differences.length });
       feedback.className = 'alert alert-warning mt-3 mb-0';
       updateSolutionAccess(timerStartedAt === null ? 0 : Date.now() - timerStartedAt);
+    }
+    feedback.hidden = false;
+  }
+
+  function renderCostWork() {
+    const terms = practice.solution.terms;
+    const rows = terms.map((term, index) =>
+      '<tr><th scope="row">' + term.cell + '</th>' +
+      '<td>' + fmt(term.cost) + '</td>' +
+      '<td>' + fmt(term.quantity) + '</td>' +
+      '<td><label class="visually-hidden" for="practiceCostTerm' + index + '">' +
+      tr('costWorkProduct') + ' — ' + term.cell + '</label>' +
+      '<input id="practiceCostTerm' + index + '" class="form-control form-control-sm practice-cost-answer" ' +
+      'type="number" step="any" inputmode="decimal" autocomplete="off" data-cost-term="' + index + '"></td></tr>'
+    ).join('');
+    $('#practiceCostWorkRows').innerHTML =
+      '<table class="table table-sm table-bordered align-middle text-center mb-0"><thead><tr>' +
+      '<th scope="col" data-practice-text="costWorkRoute">' + tr('costWorkRoute') + '</th>' +
+      '<th scope="col" data-practice-text="costWorkUnitCost">' + tr('costWorkUnitCost') + '</th>' +
+      '<th scope="col" data-practice-text="costWorkQuantity">' + tr('costWorkQuantity') + '</th>' +
+      '<th scope="col" data-practice-text="costWorkProduct">' + tr('costWorkProduct') + '</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table>';
+    $('#practiceTotalCostAnswer').value = '';
+    $('#practiceTotalCostAnswer').disabled = false;
+    $('#practiceCheckCost').disabled = false;
+    $('#practiceCostFeedback').hidden = true;
+  }
+
+  function checkCostWork() {
+    if (!practice || practice.difficulty === 'easy' || reviewMode || completedCurrent) return;
+    const answers = $$('.practice-cost-answer', $('#practiceCostWork'));
+    const totalInput = $('#practiceTotalCostAnswer');
+    const values = answers.map((input) => input.value.trim() === '' ? NaN : Number(input.value));
+    const total = totalInput.value.trim() === '' ? NaN : Number(totalInput.value);
+    const feedback = $('#practiceCostFeedback');
+    if (values.some((value) => !Number.isFinite(value)) || !Number.isFinite(total)) {
+      feedback.textContent = tr('costWorkIncomplete');
+      feedback.className = 'alert alert-warning mt-3 mb-0';
+    } else {
+      const productsCorrect = practice.solution.terms.every((term, index) =>
+        Math.abs(values[index] - term.product) <= 1e-9);
+      const totalCorrect = Math.abs(total - practice.solution.total) <= 1e-9;
+      if (productsCorrect && totalCorrect) {
+        feedback.textContent = tr('costWorkCorrect');
+        feedback.className = 'alert alert-success mt-3 mb-0';
+        feedback.hidden = false;
+        if (!completedCurrent) celebrateCompletion();
+        return;
+      }
+      feedback.textContent = tr('costWorkIncorrect');
+      feedback.className = 'alert alert-warning mt-3 mb-0';
     }
     feedback.hidden = false;
   }
@@ -1213,6 +1270,8 @@
     updateAllocationHighlights();
     $('#practiceHintMessage').hidden = true;
     $('#practiceFeedback').hidden = true;
+    $('#practiceCostWork').hidden = true;
+    $('#practiceCostFeedback').hidden = true;
     $('#practiceShowSolution').hidden = true;
     $('#practiceShowSolution').textContent = tr('showSolution');
     $('#practiceSolution').hidden = true;
@@ -1225,8 +1284,10 @@
     language = $('#languageSelect').value || 'en';
     $('#practiceGenerate').addEventListener('click', generate);
     $('#practiceCurrency').value = loadCurrency();
+    updateCostCurrencySign();
     $('#practiceCurrency').addEventListener('change', () => {
       saveCurrency();
+      updateCostCurrencySign();
       if (practice) {
         if (reviewMode) {
           renderMatrix($('#practiceMatrix'), practice.solution.alloc, false);
@@ -1242,6 +1303,11 @@
     $('#practiceReset').addEventListener('click', clearAllocations);
     $('#practiceHint').addEventListener('click', showHint);
     $('#practiceCheck').addEventListener('click', checkAllocations);
+    $('#practiceCheckCost').addEventListener('click', checkCostWork);
+    $('#practiceCostWork').addEventListener('input', (event) => {
+      if (!event.target.matches('.practice-cost-answer, #practiceTotalCostAnswer')) return;
+      $('#practiceCostFeedback').hidden = true;
+    });
     $('#practiceRevealAnswer').addEventListener('click', revealSelectedCell);
     $('#practiceRevealCell').addEventListener('change', renderPoints);
     $('#practiceDifficulty').addEventListener('change', () => {
@@ -1277,6 +1343,8 @@
       $$('.practice-cost-hint').forEach((cell) => cell.classList.remove('practice-cost-hint'));
       $('#practiceHintMessage').hidden = true;
       $('#practiceFeedback').hidden = true;
+      $('#practiceCostWork').hidden = true;
+      $('#practiceCostFeedback').hidden = true;
       $('#practiceCelebration').hidden = true;
       $('#practiceShowSolution').hidden = true;
       $('#practiceShowSolution').textContent = tr('showSolution');

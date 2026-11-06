@@ -769,24 +769,24 @@
     const val = (v) => (v === undefined || v === null ? '' : v);
 
     let html = '<thead><tr><th></th>';
-    for (let j = 0; j < n; j++) html += '<th>D' + (j + 1) + '</th>';
+    for (let j = 0; j < n; j++) html += '<th>City' + (j + 1) + '</th>';
     html += '<th>' + tr('Supply', 'Suplay') + '</th></tr></thead><tbody>';
     for (let i = 0; i < m; i++) {
-      html += '<tr><th class="row-label">S' + (i + 1) + '</th>';
+      html += '<tr><th class="row-label">Factory' + (i + 1) + '</th>';
       for (let j = 0; j < n; j++) {
         html += '<td class="cost-entry-cell"><input type="number" min="0" step="any" class="form-control form-control-sm alloc-in" data-i="' + i + '" data-j="' + j +
-          '" aria-label="' + staticText('shipmentQuantity') + ' S' + (i + 1) + ' ' + tr('to', 'papuntang') + ' D' + (j + 1) +
+          '" aria-label="' + staticText('shipmentQuantity') + ' Factory' + (i + 1) + ' ' + tr('to', 'papuntang') + ' City' + (j + 1) +
           '" value="' + val(pf.alloc && pf.alloc[i + ',' + j]) + '"><div class="cost-entry-control"><span class="cost-entry-symbol" aria-hidden="true">' +
           (CURRENCY_SIGNS[$('#currency').value] || CURRENCY_SIGNS.USD) + '</span><input type="number" min="0" step="any" class="form-control form-control-sm cost-in" data-i="' + i + '" data-j="' + j +
-          '" aria-label="' + tr('Unit cost', 'Gastos bawat yunit') + ' S' + (i + 1) + ' ' + tr('to', 'papuntang') + ' D' + (j + 1) + '" value="' + val(pf.cost[i + ',' + j]) + '"></div></td>';
+          '" aria-label="' + tr('Unit cost', 'Gastos bawat yunit') + ' Factory' + (i + 1) + ' ' + tr('to', 'papuntang') + ' City' + (j + 1) + '" value="' + val(pf.cost[i + ',' + j]) + '"></div></td>';
       }
       html += '<td class="supply-cell"><input type="number" min="0" step="any" class="form-control form-control-sm sup-in" data-i="' + i +
-        '" aria-label="' + tr('Supply for source', 'Supply ng pinagmulan') + ' S' + (i + 1) + '" value="' + val(pf.sup && pf.sup[i]) + '"></td></tr>';
+        '" aria-label="' + tr('Supply for source', 'Supply ng pinagmulan') + ' Factory' + (i + 1) + '" value="' + val(pf.sup && pf.sup[i]) + '"></td></tr>';
     }
     html += '<tr><th class="row-label">' + tr('Demand', 'Demand') + '</th>';
     for (let j = 0; j < n; j++) {
       html += '<td class="demand-cell"><input type="number" min="0" step="any" class="form-control form-control-sm dem-in" data-j="' + j +
-        '" aria-label="' + tr('Demand for destination', 'Demand ng destinasyon') + ' D' + (j + 1) + '" value="' + val(pf.dem && pf.dem[j]) + '"></td>';
+        '" aria-label="' + tr('Demand for destination', 'Demand ng destinasyon') + ' City' + (j + 1) + '" value="' + val(pf.dem && pf.dem[j]) + '"></td>';
     }
     html += '<td class="lab grand-total-cell" id="totalsCell">-</td></tr></tbody>';
     $('#inputMatrix').innerHTML = html;
@@ -855,14 +855,14 @@
     const sourceSummary = sources.map((input, i) => {
       const assigned = allocations[i].reduce((sum, value) => sum + value, 0);
       const required = parseFloat(input.value);
-      if (!Number.isFinite(required)) return 'S' + (i + 1) + ': ' + fmt(assigned) + ' / —';
-      return 'S' + (i + 1) + ': ' + fmt(assigned) + ' / ' + fmt(required) + ' ' + marginDifference(assigned, required);
+      if (!Number.isFinite(required)) return 'Factory' + (i + 1) + ': ' + fmt(assigned) + ' / —';
+      return 'Factory' + (i + 1) + ': ' + fmt(assigned) + ' / ' + fmt(required) + ' ' + marginDifference(assigned, required);
     });
     const destinationSummary = destinations.map((input, j) => {
       const received = allocations.reduce((sum, row) => sum + row[j], 0);
       const required = parseFloat(input.value);
-      if (!Number.isFinite(required)) return 'D' + (j + 1) + ': ' + fmt(received) + ' / —';
-      return 'D' + (j + 1) + ': ' + fmt(received) + ' / ' + fmt(required) + ' ' + marginDifference(received, required);
+      if (!Number.isFinite(required)) return 'City' + (j + 1) + ': ' + fmt(received) + ' / —';
+      return 'City' + (j + 1) + ': ' + fmt(received) + ' / ' + fmt(required) + ' ' + marginDifference(received, required);
     });
     target.innerHTML = '<strong>' + staticText('planFulfillment') + ':</strong><br>' +
       '<strong>' + staticText('sourceStatus') + ':</strong> ' + sourceSummary.join(' &nbsp; | &nbsp; ') + '<br>' +
@@ -1111,8 +1111,8 @@
     const columnTotals = r.columnTotals || orig.demand.map((_, j) =>
       r.alloc.slice(0, orig.supply.length).reduce((sum, row) => sum + row[j], 0));
     const origLabels = {
-      rowLabels: orig.supply.map((_, i) => 'S' + (i + 1)),
-      colLabels: orig.demand.map((_, j) => 'D' + (j + 1))
+      rowLabels: orig.supply.map((_, i) => 'Factory' + (i + 1)),
+      colLabels: orig.demand.map((_, j) => 'City' + (j + 1))
     };
     let h = renderGuidedLearning(r, currency);
 

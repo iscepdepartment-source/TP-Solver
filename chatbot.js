@@ -42,7 +42,7 @@
     rowTotals.forEach((total, index) => {
       if (Math.abs(total - problem.supply[index]) > 1e-9) {
         mismatches.push({
-          label: 'S' + (index + 1),
+          label: 'Factory' + (index + 1),
           actual: total,
           required: problem.supply[index]
         });
@@ -51,7 +51,7 @@
     columnTotals.forEach((total, index) => {
       if (Math.abs(total - problem.demand[index]) > 1e-9) {
         mismatches.push({
-          label: 'D' + (index + 1),
+          label: 'City' + (index + 1),
           actual: total,
           required: problem.demand[index]
         });
@@ -65,7 +65,7 @@
     const routes = [];
     problem.costs.forEach((row, i) => row.forEach((cost, j) => {
       if (Math.abs(cost - lowest) <= 1e-9) {
-        routes.push({ cell: 'S' + (i + 1) + ' → D' + (j + 1), cost: cost });
+        routes.push({ cell: 'Factory' + (i + 1) + ' → City' + (j + 1), cost: cost });
       }
     }));
     return routes;

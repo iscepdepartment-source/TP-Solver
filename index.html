@@ -174,7 +174,7 @@
         <div class="progress mt-2" role="progressbar" id="practiceLevelProgress" aria-label="Current difficulty progress" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0">
           <div class="progress-bar" id="practiceLevelProgressBar" style="width: 0%"></div>
         </div>
-        <div class="small text-muted mt-2" data-practice-text="unlockHelp">Complete 20 problems in each level to unlock the next level. Progress is saved on this device.</div>
+        <div class="small text-muted mt-2" data-practice-text="unlockHelp">All difficulty levels are available now. Progress is saved on this device.</div>
       </div>
       <div class="row g-3 align-items-end">
         <div class="col-12 col-md-4">
@@ -299,6 +299,24 @@
       </div>
       <div id="practiceHintMessage" class="alert alert-info py-2 mt-3 mb-0" role="status" aria-live="polite" hidden></div>
       <div id="practiceFeedback" class="alert mt-3 mb-0" role="status" aria-live="polite" hidden></div>
+      <section id="practiceCostWork" class="practice-cost-work mt-3" aria-labelledby="practiceCostWorkTitle" hidden>
+        <h3 class="h6" id="practiceCostWorkTitle" data-practice-text="costWorkTitle">Calculate the Total Least Cost</h3>
+        <p class="small text-muted" data-practice-text="costWorkHelp">For each correct shipment, multiply its unit cost by its shipment quantity. Then add the products and enter the total least cost.</p>
+        <div id="practiceCostWorkRows" class="table-responsive"></div>
+        <div class="row g-2 align-items-end mt-1">
+          <div class="col-12 col-sm-7 col-md-5">
+            <label for="practiceTotalCostAnswer" class="form-label small mb-1" data-practice-text="totalLeastCost">Total least cost</label>
+            <div class="input-group input-group-sm">
+              <span class="input-group-text" id="practiceCostCurrencySign" aria-hidden="true">$</span>
+              <input id="practiceTotalCostAnswer" class="form-control" type="number" step="any" inputmode="decimal" autocomplete="off">
+            </div>
+          </div>
+          <div class="col-12 col-sm-auto">
+            <button type="button" class="btn btn-success btn-sm" id="practiceCheckCost" data-practice-text="checkCostWork">Check calculations</button>
+          </div>
+        </div>
+        <div id="practiceCostFeedback" class="alert mt-3 mb-0" role="status" aria-live="polite" hidden></div>
+      </section>
       <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="practiceShowSolution" hidden data-practice-text="showSolution">Show LCM Solution</button>
       <div id="practiceSolution" class="mt-3" hidden></div>
       <div id="practiceCelebration" class="practice-celebration mt-3" role="status" aria-live="polite" hidden>

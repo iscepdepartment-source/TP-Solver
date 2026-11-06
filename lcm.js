@@ -8,8 +8,8 @@
   function balanceProblem(costs, supply, demand) {
     const m = supply.length;
     const n = demand.length;
-    const rowLabels = Array.from({ length: m }, (_, i) => 'S' + (i + 1));
-    const colLabels = Array.from({ length: n }, (_, j) => 'D' + (j + 1));
+    const rowLabels = Array.from({ length: m }, (_, i) => 'Factory' + (i + 1));
+    const colLabels = Array.from({ length: n }, (_, j) => 'City' + (j + 1));
     const totalSupply = sum(supply);
     const totalDemand = sum(demand);
 
@@ -22,13 +22,13 @@
       
       c.forEach((r) => r.push(0));
       d.push(round(totalSupply - totalDemand));
-      colLabels.push('Dummy D');
+      colLabels.push('Dummy City');
       dummy = { type: 'destination', quantity: round(totalSupply - totalDemand) };
     } else if (totalDemand > totalSupply) {
       
       c.push(new Array(n).fill(0));
       s.push(round(totalDemand - totalSupply));
-      rowLabels.push('Dummy S');
+      rowLabels.push('Dummy Factory');
       dummy = { type: 'source', quantity: round(totalDemand - totalSupply) };
     }
 
