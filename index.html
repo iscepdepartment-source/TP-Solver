@@ -380,6 +380,51 @@
   </section>
 </div>
 
+<section class="floating-calculator d-print-none" id="floatingCalculator" aria-label="Calculator" data-i18n-aria-label="calculatorTitle">
+  <header class="calculator-header" id="calculatorDragHandle">
+    <h2 class="calculator-title" data-i18n="calculatorTitle">Calculator</h2>
+    <div class="calculator-window-actions">
+      <button class="calculator-window-button" id="calculatorMinimize" type="button" aria-label="Minimize calculator" title="Minimize" data-i18n-aria-label="calculatorMinimize" data-i18n-title="calculatorMinimize">−</button>
+      <button class="calculator-window-button calculator-close" id="calculatorClose" type="button" aria-label="Close calculator" title="Close" data-i18n-aria-label="calculatorClose" data-i18n-title="calculatorClose">×</button>
+    </div>
+  </header>
+  <div class="calculator-content">
+    <div class="calculator-display" id="calculatorDisplay" role="group" aria-label="Calculator display" data-i18n-aria-label="calculatorDisplay">
+      <output class="calculator-expression" id="calculatorExpression" aria-label="Current calculation" data-i18n-aria-label="calculatorExpression" aria-live="polite"></output>
+      <output class="calculator-result" id="calculatorResult" aria-label="Displayed value" data-i18n-aria-label="calculatorResult" aria-live="polite" aria-atomic="true">0</output>
+    </div>
+    <div class="calculator-keys" role="group" aria-label="Calculator keys" data-i18n-aria-label="calculatorKeys">
+      <button type="button" class="calculator-key calculator-function" data-calculator-action="clear" aria-label="Clear" data-i18n-aria-label="calculatorClear">C</button>
+      <button type="button" class="calculator-key calculator-function" data-calculator-action="backspace" data-i18n-title="calculatorBackspace" aria-label="Backspace" title="Backspace" data-i18n-aria-label="calculatorBackspace">⌫</button>
+      <button type="button" class="calculator-key calculator-function" data-calculator-action="percent" data-i18n-title="calculatorPercent" aria-label="Percent" title="Percent" data-i18n-aria-label="calculatorPercent">%</button>
+      <button type="button" class="calculator-key calculator-operator" data-calculator-operator="/" aria-label="Divide" data-i18n-aria-label="calculatorDivide">÷</button>
+      <button type="button" class="calculator-key" data-calculator-digit="7">7</button>
+      <button type="button" class="calculator-key" data-calculator-digit="8">8</button>
+      <button type="button" class="calculator-key" data-calculator-digit="9">9</button>
+      <button type="button" class="calculator-key calculator-operator" data-calculator-operator="*" aria-label="Multiply" data-i18n-aria-label="calculatorMultiply">×</button>
+      <button type="button" class="calculator-key" data-calculator-digit="4">4</button>
+      <button type="button" class="calculator-key" data-calculator-digit="5">5</button>
+      <button type="button" class="calculator-key" data-calculator-digit="6">6</button>
+      <button type="button" class="calculator-key calculator-operator" data-calculator-operator="-" aria-label="Subtract" data-i18n-aria-label="calculatorSubtract">−</button>
+      <button type="button" class="calculator-key" data-calculator-digit="1">1</button>
+      <button type="button" class="calculator-key" data-calculator-digit="2">2</button>
+      <button type="button" class="calculator-key" data-calculator-digit="3">3</button>
+      <button type="button" class="calculator-key calculator-operator" data-calculator-operator="+" aria-label="Add" data-i18n-aria-label="calculatorAdd">+</button>
+      <button type="button" class="calculator-key calculator-function" data-calculator-action="sign" aria-label="Change sign" data-i18n-aria-label="calculatorSign">±</button>
+      <button type="button" class="calculator-key" data-calculator-digit="0">0</button>
+      <button type="button" class="calculator-key" data-calculator-action="decimal" aria-label="Decimal point" data-i18n-aria-label="calculatorDecimal">.</button>
+      <button type="button" class="calculator-key calculator-equals" data-calculator-action="equals" aria-label="Equals" data-i18n-aria-label="calculatorEquals">=</button>
+    </div>
+  </div>
+  <button class="calculator-resize-handle" id="calculatorResizeHandle" type="button" aria-label="Resize calculator" title="Drag to resize" data-i18n-aria-label="calculatorResize" data-i18n-title="calculatorResize">
+    <span aria-hidden="true">⤢</span>
+  </button>
+</section>
+<button class="calculator-launcher d-print-none" id="calculatorOpen" type="button" aria-label="Open calculator" title="Open calculator" data-i18n-aria-label="calculatorOpen" data-i18n-title="calculatorOpen" hidden>
+  <i class="bi bi-calculator" aria-hidden="true"></i>
+  <span data-i18n="calculatorOpen">Calculator</span>
+</button>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="lcm.js"></script>

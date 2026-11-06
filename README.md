@@ -18,4 +18,6 @@ After calculating a shipment plan, choose **Help with this result** to see quest
 
 Use the **Dark mode / Light mode** button in the top bar to switch appearance. The selected theme is saved in the browser on the current device.
 
+The floating **Calculator** is available throughout the app. It shows the current expression above the result, and supports basic arithmetic, percentages, decimals, sign changes, keyboard input, dragging by its header, resizing from its lower-right corner, minimize/restore, and close/reopen. Its size, position, and open/minimized state are saved in the browser.
+
 Practice Mode has its own currency selector (US Dollar, Philippine Peso, Euro, or British Pound) for matrix costs and hints; its selection is saved separately from the New Problem currency.

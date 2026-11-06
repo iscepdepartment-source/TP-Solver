@@ -10,6 +10,26 @@
   const LANGUAGE_KEY = 'tp_lcm_language';
   const THEME_KEY = 'tp_lcm_theme';
   const translations = {
+    calculatorTitle: ['Calculator', 'Calculator'],
+    calculatorDisplay: ['Calculator display', 'Display ng calculator'],
+    calculatorExpression: ['Current calculation', 'Kasalukuyang kinukuwenta'],
+    calculatorResult: ['Displayed value', 'Ipinapakitang halaga'],
+    calculatorResize: ['Resize calculator', 'Baguhin ang laki ng calculator'],
+    calculatorOpen: ['Open calculator', 'Buksan ang calculator'],
+    calculatorMinimize: ['Minimize calculator', 'I-minimize ang calculator'],
+    calculatorRestore: ['Restore calculator', 'Ibalik ang calculator'],
+    calculatorClose: ['Close calculator', 'Isara ang calculator'],
+    calculatorKeys: ['Calculator keys', 'Mga pindutan ng calculator'],
+    calculatorClear: ['Clear', 'I-clear'],
+    calculatorBackspace: ['Backspace', 'Burahin ang huling numero'],
+    calculatorPercent: ['Percent', 'Porsiyento'],
+    calculatorAdd: ['Add', 'Dagdag'],
+    calculatorSubtract: ['Subtract', 'Bawas'],
+    calculatorMultiply: ['Multiply', 'I-multiply'],
+    calculatorDivide: ['Divide', 'I-divide'],
+    calculatorSign: ['Change sign', 'Palitan ang sign'],
+    calculatorDecimal: ['Decimal point', 'Puntong desimal'],
+    calculatorEquals: ['Equals', 'Katumbas'],
     method: ['Least Cost Method', 'Pamamaraang Least Cost'],
     dashboard: ['Dashboard', 'Pangunahing Pahina'],
     newProblem: ['New Problem', 'Bagong Problema'],
@@ -169,6 +189,20 @@
     $$('[data-i18n-placeholder]').forEach((el) => {
       el.placeholder = staticText(el.dataset.i18nPlaceholder);
     });
+    $$('[data-i18n-title]').forEach((el) => {
+      el.title = staticText(el.dataset.i18nTitle);
+    });
+    $$('[data-i18n-aria-label]').forEach((el) => {
+      el.setAttribute('aria-label', staticText(el.dataset.i18nAriaLabel));
+    });
+    const calculatorMinimize = $('#calculatorMinimize');
+    if (calculatorMinimize) {
+      const key = $('#floatingCalculator').classList.contains('is-minimized')
+        ? 'calculatorRestore'
+        : 'calculatorMinimize';
+      calculatorMinimize.setAttribute('aria-label', staticText(key));
+      calculatorMinimize.title = staticText(key);
+    }
     updateThemeControl();
     $('#pageTitle').textContent = ({
       dashboard: staticText('dashboard'),
@@ -244,6 +278,367 @@
     $('#studentChat').hidden = name !== 'results' || !current;
     if (name === 'dashboard') renderDashboard();
     window.scrollTo(0, 0);
+  }
+
+  function initCalculator() {
+    const panel = $('#floatingCalculator');
+    const launcher = $('#calculatorOpen');
+    const display = $('#calculatorResult');
+    const expressionDisplay = $('#calculatorExpression');
+    const header = $('#calculatorDragHandle');
+    const resizeHandle = $('#calculatorResizeHandle');
+    const stateKey = 'tp_lcm_calculator_state_v1';
+    const state = {
+      value: '0',
+      expression: '',
+      accumulator: null,
+      operator: null,
+      waitingForOperand: false,
+      lastOperator: null,
+      lastOperand: null
+    };
+    let layoutSaveTimeout = null;
+    let drag = null;
+    let resizeDrag = null;
+    let lastVisibleRect = null;
+    let lastExpandedRect = null;
+
+    const readLayout = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(stateKey) || 'null');
+        return saved && typeof saved === 'object' ? saved : {};
+      } catch (error) {
+        console.warn('Calculator settings could not be loaded from this browser.');
+        return {};
+      }
+    };
+    const saveLayout = () => {
+      window.clearTimeout(layoutSaveTimeout);
+      layoutSaveTimeout = window.setTimeout(() => {
+        const rect = panel.hidden && lastVisibleRect ? lastVisibleRect : panel.getBoundingClientRect();
+        if (!panel.hidden) lastVisibleRect = rect;
+        if (!panel.hidden && !panel.classList.contains('is-minimized')) lastExpandedRect = rect;
+        const sizeRect = panel.classList.contains('is-minimized') && lastExpandedRect
+          ? lastExpandedRect
+          : rect;
+        try {
+          localStorage.setItem(stateKey, JSON.stringify({
+            left: Math.round(rect.left),
+            top: Math.round(rect.top),
+            width: Math.round(sizeRect.width),
+            height: Math.round(sizeRect.height),
+            minimized: panel.classList.contains('is-minimized'),
+            closed: panel.hidden
+          }));
+        } catch (error) {
+          console.warn('Calculator settings could not be saved in this browser.');
+        }
+      }, 120);
+    };
+    const showExpression = (value) => {
+      state.expression = value;
+      expressionDisplay.textContent = value;
+    };
+    const operatorSymbol = (operator) => ({ '*': '×', '/': '÷', '-': '−', '+': '+' })[operator];
+    const showDisplay = (value) => {
+      state.value = value;
+      display.textContent = value;
+    };
+    const formatResult = (value) => {
+      if (!Number.isFinite(value)) return null;
+      const rounded = Number(value.toPrecision(12));
+      return Object.is(rounded, -0) ? '0' : String(rounded);
+    };
+    const calculate = (left, operator, right) => {
+      if (operator === '+') return left + right;
+      if (operator === '-') return left - right;
+      if (operator === '*') return left * right;
+      if (operator === '/') return right === 0 ? null : left / right;
+      return right;
+    };
+    const clear = () => {
+      state.accumulator = null;
+      state.operator = null;
+      state.waitingForOperand = false;
+      state.lastOperator = null;
+      state.lastOperand = null;
+      showExpression('');
+      showDisplay('0');
+    };
+    const enterDigit = (digit) => {
+      if (state.value === 'Error' || state.waitingForOperand) {
+        if (!state.operator) {
+          state.accumulator = null;
+          state.lastOperator = null;
+          state.lastOperand = null;
+        }
+        showDisplay(digit);
+        state.waitingForOperand = false;
+      } else {
+        showDisplay(state.value === '0' ? digit : state.value + digit);
+      }
+      if (state.operator) {
+        showExpression(state.accumulator + ' ' + operatorSymbol(state.operator) + ' ' + state.value);
+      } else {
+        showExpression('');
+      }
+    };
+    const enterDecimal = () => {
+      if (state.value === 'Error' || state.waitingForOperand) {
+        if (!state.operator) {
+          state.accumulator = null;
+          state.lastOperator = null;
+          state.lastOperand = null;
+        }
+        showDisplay('0.');
+        state.waitingForOperand = false;
+      } else if (!state.value.includes('.')) {
+        showDisplay(state.value + '.');
+      }
+      if (state.operator) {
+        showExpression(state.accumulator + ' ' + operatorSymbol(state.operator) + ' ' + state.value);
+      } else {
+        showExpression('');
+      }
+    };
+    const chooseOperator = (operator) => {
+      if (state.value === 'Error') clear();
+      const currentValue = Number(state.value);
+      if (state.operator && !state.waitingForOperand) {
+        const result = formatResult(calculate(state.accumulator, state.operator, currentValue));
+        if (result === null) {
+          clear();
+          showDisplay('Error');
+          return;
+        }
+        showDisplay(result);
+        state.accumulator = Number(result);
+      } else if (state.accumulator === null || !state.operator) {
+        state.accumulator = currentValue;
+      }
+      showExpression(state.accumulator + ' ' + operatorSymbol(operator));
+      state.operator = operator;
+      state.waitingForOperand = true;
+      state.lastOperator = null;
+      state.lastOperand = null;
+    };
+    const equals = () => {
+      if (state.value === 'Error') return;
+      const operator = state.operator || state.lastOperator;
+      if (!operator) return;
+      const right = state.operator ? Number(state.value) : state.lastOperand;
+      const left = state.accumulator === null ? Number(state.value) : state.accumulator;
+      showExpression(left + ' ' + operatorSymbol(operator) + ' ' + right);
+      const result = formatResult(calculate(left, operator, right));
+      if (result === null) {
+        state.accumulator = null;
+        state.operator = null;
+        state.lastOperator = null;
+        state.lastOperand = null;
+        state.waitingForOperand = true;
+        showDisplay('Error');
+        return;
+      }
+      showDisplay(result);
+      state.accumulator = Number(result);
+      state.lastOperator = operator;
+      state.lastOperand = right;
+      state.operator = null;
+      state.waitingForOperand = true;
+    };
+    const runAction = (action) => {
+      if (action === 'clear') {
+        clear();
+      } else if (action === 'backspace') {
+        if (state.value === 'Error' || state.waitingForOperand) {
+          if (!state.operator) {
+            state.accumulator = null;
+            state.lastOperator = null;
+            state.lastOperand = null;
+          }
+          showDisplay('0');
+          state.waitingForOperand = false;
+        } else {
+          const trimmed = state.value.slice(0, -1);
+          showDisplay(trimmed && trimmed !== '-' ? trimmed : '0');
+        }
+        showExpression(state.operator
+          ? state.accumulator + ' ' + operatorSymbol(state.operator) + ' ' + state.value
+          : '');
+      } else if (action === 'decimal') {
+        enterDecimal();
+      } else if (action === 'sign' && state.value !== 'Error') {
+        showDisplay(formatResult(-Number(state.value)) || '0');
+        showExpression(state.operator
+          ? state.accumulator + ' ' + operatorSymbol(state.operator) + ' ' + state.value
+          : '');
+      } else if (action === 'percent' && state.value !== 'Error') {
+        const previousValue = state.value;
+        showDisplay(formatResult(Number(state.value) / 100) || '0');
+        showExpression(state.operator
+          ? state.accumulator + ' ' + operatorSymbol(state.operator) + ' ' + state.value
+          : previousValue + '%');
+      } else if (action === 'equals') {
+        equals();
+      }
+    };
+    const setMinimized = (minimized) => {
+      panel.classList.toggle('is-minimized', minimized);
+      const label = staticText(minimized ? 'calculatorRestore' : 'calculatorMinimize');
+      $('#calculatorMinimize').setAttribute('aria-expanded', String(!minimized));
+      $('#calculatorMinimize').setAttribute('aria-label', label);
+      $('#calculatorMinimize').title = label;
+      saveLayout();
+    };
+
+    const saved = readLayout();
+    if (Number.isFinite(saved.left) && Number.isFinite(saved.top) &&
+        Number.isFinite(saved.width) && Number.isFinite(saved.height)) {
+      lastVisibleRect = {
+        left: saved.left,
+        top: saved.top,
+        width: saved.width,
+        height: saved.height
+      };
+      lastExpandedRect = lastVisibleRect;
+    }
+    panel.hidden = saved.closed === true;
+    launcher.hidden = !panel.hidden;
+    panel.classList.toggle('is-minimized', saved.minimized === true);
+    if (Number.isFinite(saved.width)) panel.style.width = Math.max(260, Math.min(saved.width, window.innerWidth - 16)) + 'px';
+    if (Number.isFinite(saved.height)) panel.style.height = Math.max(300, Math.min(saved.height, window.innerHeight - 16)) + 'px';
+    if (Number.isFinite(saved.left) && Number.isFinite(saved.top)) {
+      const width = Number.isFinite(saved.width) ? saved.width : 320;
+      const height = Number.isFinite(saved.height) ? saved.height : 420;
+      panel.style.left = Math.max(0, Math.min(saved.left, window.innerWidth - width)) + 'px';
+      panel.style.top = Math.max(0, Math.min(saved.top, window.innerHeight - height)) + 'px';
+      panel.style.right = 'auto';
+      panel.style.bottom = 'auto';
+    }
+    setMinimized(saved.minimized === true);
+
+    panel.addEventListener('click', (event) => {
+      const button = event.target.closest('button');
+      if (!button) return;
+      if (button.dataset.calculatorDigit !== undefined) enterDigit(button.dataset.calculatorDigit);
+      else if (button.dataset.calculatorOperator) chooseOperator(button.dataset.calculatorOperator);
+      else if (button.dataset.calculatorAction) runAction(button.dataset.calculatorAction);
+    });
+    $('#calculatorClose').addEventListener('click', () => {
+      lastVisibleRect = panel.getBoundingClientRect();
+      panel.hidden = true;
+      launcher.hidden = false;
+      saveLayout();
+      launcher.focus();
+    });
+    launcher.addEventListener('click', () => {
+      panel.hidden = false;
+      launcher.hidden = true;
+      if (panel.classList.contains('is-minimized')) setMinimized(false);
+      saveLayout();
+      $('#calculatorMinimize').focus();
+    });
+    $('#calculatorMinimize').addEventListener('click', () => {
+      setMinimized(!panel.classList.contains('is-minimized'));
+    });
+
+    header.addEventListener('pointerdown', (event) => {
+      if (event.target.closest('button') || event.button !== 0) return;
+      const rect = panel.getBoundingClientRect();
+      panel.style.left = rect.left + 'px';
+      panel.style.top = rect.top + 'px';
+      panel.style.right = 'auto';
+      panel.style.bottom = 'auto';
+      drag = { pointerId: event.pointerId, x: event.clientX - rect.left, y: event.clientY - rect.top };
+      header.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    });
+    header.addEventListener('pointermove', (event) => {
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const maxLeft = Math.max(0, window.innerWidth - panel.offsetWidth);
+      const maxTop = Math.max(0, window.innerHeight - panel.offsetHeight);
+      panel.style.left = Math.max(0, Math.min(event.clientX - drag.x, maxLeft)) + 'px';
+      panel.style.top = Math.max(0, Math.min(event.clientY - drag.y, maxTop)) + 'px';
+    });
+    const finishDrag = (event) => {
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      drag = null;
+      saveLayout();
+    };
+    header.addEventListener('pointerup', finishDrag);
+    header.addEventListener('pointercancel', finishDrag);
+    resizeHandle.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0 || panel.classList.contains('is-minimized')) return;
+      const rect = panel.getBoundingClientRect();
+      panel.style.left = rect.left + 'px';
+      panel.style.top = rect.top + 'px';
+      panel.style.right = 'auto';
+      panel.style.bottom = 'auto';
+      resizeDrag = {
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+        width: rect.width,
+        height: rect.height
+      };
+      resizeHandle.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    });
+    resizeHandle.addEventListener('pointermove', (event) => {
+      if (!resizeDrag || resizeDrag.pointerId !== event.pointerId) return;
+      const minWidth = Math.min(260, window.innerWidth - 16);
+      const minHeight = Math.min(320, window.innerHeight - 100);
+      const width = Math.max(minWidth, Math.min(
+        resizeDrag.width + event.clientX - resizeDrag.x,
+        window.innerWidth - parseFloat(panel.style.left) - 8
+      ));
+      const height = Math.max(minHeight, Math.min(
+        resizeDrag.height + event.clientY - resizeDrag.y,
+        window.innerHeight - parseFloat(panel.style.top) - 16
+      ));
+      panel.style.width = width + 'px';
+      panel.style.height = height + 'px';
+    });
+    const finishResize = (event) => {
+      if (!resizeDrag || resizeDrag.pointerId !== event.pointerId) return;
+      resizeDrag = null;
+      saveLayout();
+    };
+    resizeHandle.addEventListener('pointerup', finishResize);
+    resizeHandle.addEventListener('pointercancel', finishResize);
+    resizeHandle.addEventListener('keydown', (event) => {
+      if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
+      const rect = panel.getBoundingClientRect();
+      const width = rect.width + (event.key === 'ArrowRight' ? 16 : event.key === 'ArrowLeft' ? -16 : 0);
+      const height = rect.height + (event.key === 'ArrowDown' ? 16 : event.key === 'ArrowUp' ? -16 : 0);
+      panel.style.width = Math.max(Math.min(260, window.innerWidth - 16), Math.min(width, window.innerWidth - rect.left - 8)) + 'px';
+      panel.style.height = Math.max(Math.min(320, window.innerHeight - 100), Math.min(height, window.innerHeight - rect.top - 16)) + 'px';
+      event.preventDefault();
+      saveLayout();
+    });
+    panel.addEventListener('mouseup', saveLayout);
+    panel.addEventListener('touchend', saveLayout, { passive: true });
+
+    document.addEventListener('keydown', (event) => {
+      if (panel.hidden || panel.classList.contains('is-minimized')) return;
+      if (event.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+      if (/^[0-9]$/.test(event.key)) enterDigit(event.key);
+      else if (['+', '-', '*', '/'].includes(event.key)) chooseOperator(event.key);
+      else if (event.key === '.') enterDecimal();
+      else if (event.key === '%') runAction('percent');
+      else if (event.key === 'Enter' || event.key === '=') equals();
+      else if (event.key === 'Backspace') runAction('backspace');
+      else if (event.key === 'Escape') clear();
+      else return;
+      event.preventDefault();
+    });
+    window.addEventListener('resize', () => {
+      const rect = panel.getBoundingClientRect();
+      if (panel.style.left) panel.style.left = Math.max(0, Math.min(rect.left, window.innerWidth - panel.offsetWidth)) + 'px';
+      if (panel.style.top) panel.style.top = Math.max(0, Math.min(rect.top, window.innerHeight - panel.offsetHeight)) + 'px';
+      saveLayout();
+    });
+    if (window.ResizeObserver) new ResizeObserver(saveLayout).observe(panel);
   }
 
   function showAlert(msg, type) {
@@ -960,6 +1355,7 @@
       }
     });
 
+    initCalculator();
     applyLanguage();
     buildMatrix();
     renderDashboard();
