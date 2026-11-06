@@ -1,0 +1,17 @@
+# Transportation Problem Solver
+
+Open `index.html` in a browser to use the solver and practice mode. Choose **Practice Mode**, select Easy, Medium, or Hard, and generate random problems. Enter your allocations, request a lowest-cost hint, check your work, and optionally reveal the LCM solution. The practice matrix heatmap and animated shipment-flow diagram update as you work.
+
+Practice difficulty unlocks in order: solve 20 problems correctly in Easy to unlock Medium, then 20 in Medium to unlock Hard. A completed problem triggers a brief congratulations animation and a **Next Problem** button. Progress is saved in the browser on the current device; Hard remains available for continued practice after its 20-problem goal.
+
+Hard problems include a rotating real-world distribution scenario and an unbalanced transportation matrix. Students enter their own allocation plan; hints point to the lowest available cost. The full LCM solution button unlocks after 15 minutes on Easy, 20 minutes on Medium, and 30 minutes on Hard. A timer tracks the time from generating the problem until the correct solution. Performance analytics save completion counts and solve times on the device, show the average of up to 100 recent attempts for each difficulty, and compare the latest five attempts with the previous five once there is enough history.
+
+Students earn 10 points for each correctly completed problem. They can spend 5 points for a hint or 10 points to reveal the correct allocation in one selected cell. Points and practice analytics are saved locally in the browser.
+
+Correctly completed practice problems are also saved in a local **Completed Problems** review list (up to 250 entries). Select **Review** to reopen a problem with its original currency, scenario, completed allocations, and LCM reference solution. Reviewing does not change points or progression; choose **Generate a new problem** to return to practice.
+
+After calculating a shipment plan, choose **Help with this result** to see questions generated from that specific solution, such as its balance totals, mismatched margins, largest shipment, lowest-cost route, and largest cost contribution. The interface, practice tools, and explanations are available in English, Tagalog, and Taglish (Tagalog-English). Your language choice is saved on this device. These features need no AI service, API key, server, or internet connection.
+
+Use the **Dark mode / Light mode** button in the top bar to switch appearance. The selected theme is saved in the browser on the current device.
+
+Practice Mode has its own currency selector (US Dollar, Philippine Peso, Euro, or British Pound) for matrix costs and hints; its selection is saved separately from the New Problem currency.
