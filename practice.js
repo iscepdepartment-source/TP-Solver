@@ -124,7 +124,7 @@
     problem: ['Practice Problem', 'Problema sa Pagsasanay'],
     matrixHelp: ['Costs are shaded from low (green) to high (red). Enter a shipment quantity in each cell.', 'May kulay ang gastos: berde ang mababa at pula ang mataas. Maglagay ng dami ng padala sa bawat cell.'],
     heatmapLegend: ['Unit cost heatmap:', 'Heatmap ng gastos bawat yunit:'],
-    correctAllocationLegend: ['Green cells show allocations that match the LCM answer.', 'Ipinapakita ng berdeng cell ang alokasyong tugma sa sagot ng LCM.'],
+    correctAllocationLegend: ['After checking, green cells match the LCM answer and red cells need correction.', 'Pagkatapos magsuri, berde ang tugma sa sagot ng LCM at pula ang kailangang itama.'],
     lowest: ['Lowest', 'Pinakamababa'],
     mediumCost: ['Medium', 'Katamtaman'],
     highest: ['Highest', 'Pinakamataas'],
@@ -135,6 +135,8 @@
     flowTitle: ['Your Shipment Flows', 'Daloy ng mga Padala'],
     flowHelp: ['Animated arrows show the source-to-destination routes for the quantities you entered.', 'Ipinapakita ng mga gumagalaw na arrow ang mga rutang pinadalhan batay sa mga daming inilagay mo.'],
     flowAria: ['Animated shipment flows from sources to destinations.', 'Animated na daloy ng padala mula sa mga pinagmulan papunta sa mga destinasyon.'],
+    flowIncorrectAria: ['Animated shipment flows. Incorrect allocations are marked with an X.', 'Animated na daloy ng padala. May X sa mga maling alokasyon.'],
+    incorrectFlowMark: ['Incorrect allocation', 'Maling alokasyon'],
     generateFirst: ['Generate a problem to start practicing.', 'Bumuo muna ng problema upang makapagsimula.'],
     hintDone: ['All supply and demand are accounted for. Check your allocations.', 'Nailaan na ang lahat ng supply at demand. Suriin ang mga alokasyon mo.'],
     hintOver: ['Some entered quantities exceed the remaining supply or demand. Correct them before requesting a hint.', 'May mga inilagay na dami na lumalampas sa natitirang supply o demand. Ayusin muna bago humingi ng clue.'],
@@ -174,6 +176,7 @@
   let hintedCell = null;
   let solutionVisible = false;
   let completedCurrent = false;
+  let allocationFeedbackVisible = false;
   let progress = loadProgress();
   let metrics = loadMetrics();
   let points = loadPoints();
@@ -213,7 +216,7 @@
     revealCellHelp: 'Spend 10 points to reveal the correct allocation for one selected cell.',
     pointsEarned: 'You earned {points} points! Your balance is {balance}.',
     heatmapLegend: 'Unit cost heatmap',
-    correctAllocationLegend: 'Green cells show allocations that match the LCM answer.',
+    correctAllocationLegend: 'After checking, green cells match the LCM answer and red cells need correction.',
     lowest: 'Lowest',
     highest: 'Highest',
     showSolution: 'Show LCM Solution',
@@ -818,18 +821,30 @@
     const height = Math.max(rows, columns) * 86 + 56;
     const rowY = (index) => 34 + (index + 0.5) * (height - 68) / rows;
     const columnY = (index) => 34 + (index + 0.5) * (height - 68) / columns;
-    let markup = '<defs><marker id="practiceArrow" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,8 L9,4 z" fill="#f5b800"></path></marker></defs>';
+    let markup = '<defs><marker id="practiceArrow" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,8 L9,4 z" fill="#f5b800"></path></marker>' +
+      '<marker id="practiceArrowIncorrect" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,8 L9,4 z" fill="#dc3545"></path></marker></defs>';
     let hasFlows = false;
+    const showAllocationFeedback = allocationFeedbackVisible && !reviewMode;
 
     allocations.forEach((row, i) => row.forEach((amount, j) => {
-      if (amount <= 0) return;
+      const expected = practice.solution.alloc[i][j];
+      const incorrect = showAllocationFeedback && amount !== expected;
+      if (amount <= 0 && !incorrect) return;
       hasFlows = true;
       const y1 = rowY(i);
       const y2 = columnY(j);
-      const strokeWidth = Math.min(9, 2 + Math.sqrt(amount) / 2);
-      markup += '<path class="practice-flow-line" d="M 142 ' + y1 + ' C 340 ' + y1 + ', 460 ' + y2 + ', 658 ' + y2 +
-        '" stroke-width="' + strokeWidth + '" marker-end="url(#practiceArrow)"></path>' +
-        '<text class="practice-flow-amount" x="400" y="' + ((y1 + y2) / 2 - 7) + '">' + fmt(amount) + '</text>';
+      const strokeWidth = Math.min(9, 2 + Math.sqrt(Math.max(0, amount)) / 2);
+      const amountY = (y1 + y2) / 2 - (incorrect ? 15 : 7);
+      markup += '<path class="practice-flow-line' + (incorrect ? ' practice-flow-line-incorrect' : '') +
+        '" d="M 142 ' + y1 + ' C 340 ' + y1 + ', 460 ' + y2 + ', 658 ' + y2 +
+        '" stroke-width="' + strokeWidth + '" marker-end="url(#' +
+        (incorrect ? 'practiceArrowIncorrect' : 'practiceArrow') + ')"></path>' +
+        '<text class="practice-flow-amount" x="400" y="' + amountY + '">' + fmt(amount) + '</text>';
+      if (incorrect) {
+        markup += '<circle class="practice-flow-error-badge" cx="400" cy="' + ((y1 + y2) / 2 + 5) +
+          '" r="12"><title>' + tr('incorrectFlowMark') + '</title></circle>' +
+          '<text class="practice-flow-error-mark" x="400" y="' + ((y1 + y2) / 2 + 5) + '" aria-hidden="true">×</text>';
+      }
     }));
 
     for (let i = 0; i < rows; i++) {
@@ -844,7 +859,7 @@
       markup += '<text class="practice-flow-empty" x="400" y="' + (height - 10) + '">' + tr('noRoutes') + '</text>';
     }
     svg.setAttribute('viewBox', '0 0 800 ' + height);
-    svg.setAttribute('aria-label', tr('flowAria'));
+    svg.setAttribute('aria-label', tr(showAllocationFeedback ? 'flowIncorrectAria' : 'flowAria'));
     svg.innerHTML = markup;
   }
 
@@ -879,18 +894,18 @@
     $('#practiceRemainingStatus').textContent = interpolate(tr('remaining'), { supply, demand });
   }
 
-  function updateCorrectAllocationCells() {
+  function updateAllocationHighlights() {
     if (!practice || reviewMode) return;
     $$('.practice-allocation', $('#practiceMatrix')).forEach((input) => {
-      const value = input.value.trim();
-      const hasValue = value !== '';
-      const allocation = hasValue ? Number(value) : 0;
-      const isCorrect = Number.isInteger(allocation) && allocation >= 0 &&
-        allocation === practice.solution.alloc[Number(input.dataset.i)][Number(input.dataset.j)];
-      const highlight = isCorrect && hasValue;
-      input.classList.toggle('practice-allocation-correct', highlight);
-      input.classList.remove('practice-allocation-incorrect');
-      input.closest('.practice-cost-cell').classList.toggle('practice-cell-correct', highlight);
+      const cell = input.closest('.practice-cost-cell');
+      const value = input.value.trim() === '' ? 0 : Number(input.value);
+      const correct = allocationFeedbackVisible &&
+        Number.isInteger(value) && value >= 0 &&
+        value === practice.solution.alloc[Number(input.dataset.i)][Number(input.dataset.j)];
+      input.classList.toggle('practice-allocation-correct', correct);
+      input.classList.toggle('practice-allocation-incorrect', allocationFeedbackVisible && !correct);
+      cell.classList.toggle('practice-cell-correct', correct);
+      cell.classList.toggle('practice-cell-incorrect', allocationFeedbackVisible && !correct);
     });
   }
 
@@ -940,6 +955,7 @@
 
   function generate() {
     reviewMode = false;
+    allocationFeedbackVisible = false;
     $('#practiceReviewBanner').hidden = true;
     let difficulty = $('#practiceDifficulty').value;
     if (LEVELS.indexOf(difficulty) > getUnlockedThrough()) {
@@ -1084,7 +1100,7 @@
       renderPoints();
       hintedCell = [current.chosen.row, current.chosen.column];
       renderMatrix($('#practiceMatrix'), readAllocations().allocations, true);
-      updateCorrectAllocationCells();
+      updateAllocationHighlights();
       const cell = practice.balanced.rowLabels[current.chosen.row] + ' → ' + practice.balanced.colLabels[current.chosen.column];
       const message = current.ties.length > 1 ? tr('hintTie') : tr('hintCell');
       hint.innerHTML = '<strong>' + interpolate(message, {
@@ -1149,6 +1165,9 @@
     const { allocations, invalid } = readAllocations();
     const feedback = $('#practiceFeedback');
     const remaining = remainingMargins(allocations);
+    allocationFeedbackVisible = true;
+    updateAllocationHighlights();
+    renderFlow(allocations);
     if (invalid || remaining.supply.some((value) => value < 0) || remaining.demand.some((value) => value < 0)) {
       feedback.textContent = invalid ? tr('invalidAmounts') : tr('hintOver');
       feedback.className = 'alert alert-warning mt-3 mb-0';
@@ -1162,17 +1181,6 @@
         differences.push([i, j]);
       }
     }));
-    $$('.practice-allocation').forEach((input) => {
-      const i = Number(input.dataset.i);
-      const j = Number(input.dataset.j);
-      input.classList.toggle('practice-allocation-correct', allocations[i][j] === practice.solution.alloc[i][j]);
-      input.classList.toggle('practice-allocation-incorrect', allocations[i][j] !== practice.solution.alloc[i][j]);
-      input.closest('.practice-cost-cell').classList.toggle(
-        'practice-cell-correct',
-        allocations[i][j] === practice.solution.alloc[i][j]
-      );
-    });
-
     if (!differences.length) {
       feedback.textContent = tr('correct');
       feedback.className = 'alert alert-success mt-3 mb-0';
@@ -1193,6 +1201,7 @@
   function clearAllocations() {
     if (!practice || reviewMode || completedCurrent) return;
     hintedCell = null;
+    allocationFeedbackVisible = false;
     solutionVisible = false;
     const allocations = Array.from({ length: practice.balanced.supply.length }, () =>
       new Array(practice.balanced.demand.length).fill(0));
@@ -1201,7 +1210,7 @@
       allocations[i][j] = practice.solution.alloc[i][j];
     });
     renderMatrix($('#practiceMatrix'), allocations, true);
-    updateCorrectAllocationCells();
+    updateAllocationHighlights();
     $('#practiceHintMessage').hidden = true;
     $('#practiceFeedback').hidden = true;
     $('#practiceShowSolution').hidden = true;
@@ -1225,7 +1234,7 @@
         } else {
           const allocations = readAllocations().allocations;
           renderMatrix($('#practiceMatrix'), allocations, true);
-          updateCorrectAllocationCells();
+          updateAllocationHighlights();
           if (solutionVisible) renderSolution();
         }
       }
@@ -1273,7 +1282,8 @@
       $('#practiceShowSolution').textContent = tr('showSolution');
       $('#practiceSolution').hidden = true;
       solutionVisible = false;
-      updateCorrectAllocationCells();
+      allocationFeedbackVisible = false;
+      updateAllocationHighlights();
       const allocations = readAllocations().allocations;
       renderRemainingStatus(allocations);
       renderFlow(allocations);
