@@ -240,6 +240,7 @@
       about: staticText('about')
     })[name];
     $('#sidebar').classList.remove('open');
+    $('#menuToggle').setAttribute('aria-expanded', 'false');
     $('#studentChat').hidden = name !== 'results' || !current;
     if (name === 'dashboard') renderDashboard();
     window.scrollTo(0, 0);
@@ -892,7 +893,10 @@
       showView(a.dataset.view);
     }));
     $$('[data-goto]').forEach((b) => b.addEventListener('click', () => showView(b.dataset.goto)));
-    $('#menuToggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
+    $('#menuToggle').addEventListener('click', () => {
+      const isOpen = $('#sidebar').classList.toggle('open');
+      $('#menuToggle').setAttribute('aria-expanded', String(isOpen));
+    });
     $('#themeToggle').addEventListener('click', () => setTheme(theme === 'dark' ? 'light' : 'dark'));
 
     $('#btnNewProblem').addEventListener('click', () => { buildMatrix(); showView('input'); });

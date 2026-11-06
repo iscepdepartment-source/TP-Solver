@@ -2,6 +2,8 @@
 
 Open `index.html` in a browser to use the solver and practice mode. Choose **Practice Mode**, select Easy, Medium, or Hard, and generate random problems. Enter your allocations, request a lowest-cost hint, check your work, and optionally reveal the LCM solution. The practice matrix heatmap and animated shipment-flow diagram update as you work.
 
+The interface adapts to mobile phones, tablets, and desktop screens, including Android and iOS browsers. On smaller screens, navigation collapses into a menu and wide matrices can be scrolled horizontally.
+
 Practice difficulty unlocks in order: solve 20 problems correctly in Easy to unlock Medium, then 20 in Medium to unlock Hard. A completed problem triggers a brief congratulations animation and a **Next Problem** button. Progress is saved in the browser on the current device; Hard remains available for continued practice after its 20-problem goal.
 
 Hard problems include a rotating real-world distribution scenario and an unbalanced transportation matrix. Students enter their own allocation plan; hints point to the lowest available cost. The full LCM solution button unlocks after 15 minutes on Easy, 20 minutes on Medium, and 30 minutes on Hard. A timer tracks the time from generating the problem until the correct solution. Performance analytics save completion counts and solve times on the device, show the average of up to 100 recent attempts for each difficulty, and compare the latest five attempts with the previous five once there is enough history.

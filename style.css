@@ -284,12 +284,81 @@ body {
 @media (max-width: 991.98px) {
   .sidebar { transform: translateX(-100%); transition: transform .2s; box-shadow: 0 0 30px rgba(0,0,0,.25); }
   .sidebar.open { transform: translateX(0); }
-  .content { margin-left: 0; padding: 16px 14px 50px; }
+  .content { width: 100%; min-width: 0; margin-left: 0; padding: 16px 14px 50px; }
+  .topbar { flex-wrap: wrap; }
+  .page-title { min-width: 0; flex: 1 1 auto; }
+  .table-responsive { -webkit-overflow-scrolling: touch; }
 }
 @media (max-width: 575.98px) {
-  .kv { grid-template-columns: 130px 1fr; }
-  .student-chat { right: 14px; bottom: 14px; }
-  .student-chat-panel { right: -4px; bottom: 54px; }
+  .content { padding: 12px 10px calc(72px + env(safe-area-inset-bottom)); }
+  .topbar { flex-wrap: wrap; gap: 10px; }
+  .page-title { min-width: 0; flex: 1 1 auto; font-size: 1.3rem; }
+  .topbar > label { flex: 1 1 100%; justify-content: space-between; }
+  .topbar > label .form-select { width: auto; min-width: 0; flex: 1 1 55%; }
+  .panel { padding: 14px 12px; }
+  .panel-head { align-items: flex-start; }
+  .panel-head > .d-flex { flex-wrap: wrap; }
+  .kv { grid-template-columns: minmax(100px, 38%) minmax(0, 1fr); overflow-wrap: anywhere; }
+  .stat-card { gap: 10px; padding: 12px; }
+  .stat-icon { width: 42px; height: 42px; font-size: 1.3rem; }
+  .stat-value { font-size: 1.5rem; }
+  .matrix-input .cost-entry-cell { min-width: 96px; }
+  .matrix-input .cost-entry-control { right: 2px; gap: 1px; }
+  .matrix-input .cost-entry-control input { width: 48px; }
+  .matrix-input .cost-entry-cell > .alloc-in { width: 68px; }
+  .practice-matrix .practice-cost-cell { min-width: 96px; }
+  .practice-matrix .practice-allocation { width: 68px; }
+  .table-responsive { max-width: 100%; overflow-x: auto; touch-action: pan-x; }
+  .student-chat { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .student-chat-panel {
+    position: fixed;
+    right: 8px;
+    bottom: calc(68px + env(safe-area-inset-bottom));
+    width: min(380px, calc(100vw - 16px));
+    height: min(540px, calc(100dvh - 92px - env(safe-area-inset-bottom)));
+    max-height: calc(100vh - 92px);
+  }
+}
+@media (max-width: 380px) {
+  .content { padding-right: 8px; padding-left: 8px; }
+  .panel { padding: 12px 9px; }
+  .topbar { gap: 8px; }
+  .topbar > label { font-size: .85rem; }
+  .btn { --bs-btn-padding-x: .65rem; }
+  .practice-matrix .practice-cost-cell,
+  .matrix-input .cost-entry-cell { min-width: 90px; }
+  .student-chat-panel { right: 4px; width: calc(100vw - 8px); }
+}
+
+@media (max-width: 575.98px) {
+  .form-control,
+  .form-select,
+  .matrix-input input,
+  .practice-matrix .practice-allocation {
+    font-size: 16px;
+  }
+  .matrix-input .cost-entry-control input {
+    height: 28px;
+    min-height: 0;
+    font-size: 16px;
+  }
+  .matrix-input .cost-entry-cell > .alloc-in {
+    height: 32px;
+    min-height: 0;
+  }
+  .practice-matrix .practice-allocation {
+    height: 32px;
+    min-height: 0;
+  }
+  .btn,
+  .form-select,
+  .form-control {
+    min-height: 44px;
+  }
+  .btn-sm {
+    min-height: 40px;
+  }
+  #practiceReviewBanner .btn { margin: 8px 0 0 !important; }
 }
 
 :root[data-theme="dark"] {
