@@ -8,6 +8,8 @@ Practice difficulty unlocks in order: solve 20 problems correctly in Easy to unl
 
 Hard problems include a rotating real-world distribution scenario and an unbalanced transportation matrix. Students enter their own allocation plan; hints point to the lowest available cost. The full LCM solution button unlocks after 15 minutes on Easy, 20 minutes on Medium, and 30 minutes on Hard. A timer tracks the time from generating the problem until the correct solution. Performance analytics save completion counts and solve times on the device, show the average of up to 100 recent attempts for each difficulty, and compare the latest five attempts with the previous five once there is enough history.
 
+In Practice Mode, a correctly entered non-empty allocation cell is highlighted green immediately; incorrect entries can be identified with **Check My Allocations**.
+
 Students earn 10 points for each correctly completed problem. They can spend 5 points for a hint or 10 points to reveal the correct allocation in one selected cell. Points and practice analytics are saved locally in the browser.
 
 Correctly completed practice problems are also saved in a local **Completed Problems** review list (up to 250 entries). Select **Review** to reopen a problem with its original currency, scenario, completed allocations, and LCM reference solution. Reviewing does not change points or progression; choose **Generate a new problem** to return to practice.

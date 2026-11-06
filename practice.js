@@ -124,6 +124,7 @@
     problem: ['Practice Problem', 'Problema sa Pagsasanay'],
     matrixHelp: ['Costs are shaded from low (green) to high (red). Enter a shipment quantity in each cell.', 'May kulay ang gastos: berde ang mababa at pula ang mataas. Maglagay ng dami ng padala sa bawat cell.'],
     heatmapLegend: ['Unit cost heatmap:', 'Heatmap ng gastos bawat yunit:'],
+    correctAllocationLegend: ['Green cells show allocations that match the LCM answer.', 'Ipinapakita ng berdeng cell ang alokasyong tugma sa sagot ng LCM.'],
     lowest: ['Lowest', 'Pinakamababa'],
     mediumCost: ['Medium', 'Katamtaman'],
     highest: ['Highest', 'Pinakamataas'],
@@ -212,6 +213,7 @@
     revealCellHelp: 'Spend 10 points to reveal the correct allocation for one selected cell.',
     pointsEarned: 'You earned {points} points! Your balance is {balance}.',
     heatmapLegend: 'Unit cost heatmap',
+    correctAllocationLegend: 'Green cells show allocations that match the LCM answer.',
     lowest: 'Lowest',
     highest: 'Highest',
     showSolution: 'Show LCM Solution',
@@ -877,6 +879,21 @@
     $('#practiceRemainingStatus').textContent = interpolate(tr('remaining'), { supply, demand });
   }
 
+  function updateCorrectAllocationCells() {
+    if (!practice || reviewMode) return;
+    $$('.practice-allocation', $('#practiceMatrix')).forEach((input) => {
+      const value = input.value.trim();
+      const hasValue = value !== '';
+      const allocation = hasValue ? Number(value) : 0;
+      const isCorrect = Number.isInteger(allocation) && allocation >= 0 &&
+        allocation === practice.solution.alloc[Number(input.dataset.i)][Number(input.dataset.j)];
+      const highlight = isCorrect && hasValue;
+      input.classList.toggle('practice-allocation-correct', highlight);
+      input.classList.remove('practice-allocation-incorrect');
+      input.closest('.practice-cost-cell').classList.toggle('practice-cell-correct', highlight);
+    });
+  }
+
   function renderLanguage() {
     $$('[data-practice-text]').forEach((element) => {
       element.textContent = tr(element.dataset.practiceText);
@@ -1067,6 +1084,7 @@
       renderPoints();
       hintedCell = [current.chosen.row, current.chosen.column];
       renderMatrix($('#practiceMatrix'), readAllocations().allocations, true);
+      updateCorrectAllocationCells();
       const cell = practice.balanced.rowLabels[current.chosen.row] + ' → ' + practice.balanced.colLabels[current.chosen.column];
       const message = current.ties.length > 1 ? tr('hintTie') : tr('hintCell');
       hint.innerHTML = '<strong>' + interpolate(message, {
@@ -1149,6 +1167,10 @@
       const j = Number(input.dataset.j);
       input.classList.toggle('practice-allocation-correct', allocations[i][j] === practice.solution.alloc[i][j]);
       input.classList.toggle('practice-allocation-incorrect', allocations[i][j] !== practice.solution.alloc[i][j]);
+      input.closest('.practice-cost-cell').classList.toggle(
+        'practice-cell-correct',
+        allocations[i][j] === practice.solution.alloc[i][j]
+      );
     });
 
     if (!differences.length) {
@@ -1179,6 +1201,7 @@
       allocations[i][j] = practice.solution.alloc[i][j];
     });
     renderMatrix($('#practiceMatrix'), allocations, true);
+    updateCorrectAllocationCells();
     $('#practiceHintMessage').hidden = true;
     $('#practiceFeedback').hidden = true;
     $('#practiceShowSolution').hidden = true;
@@ -1202,6 +1225,7 @@
         } else {
           const allocations = readAllocations().allocations;
           renderMatrix($('#practiceMatrix'), allocations, true);
+          updateCorrectAllocationCells();
           if (solutionVisible) renderSolution();
         }
       }
@@ -1249,7 +1273,7 @@
       $('#practiceShowSolution').textContent = tr('showSolution');
       $('#practiceSolution').hidden = true;
       solutionVisible = false;
-      $$('.practice-allocation').forEach((input) => input.classList.remove('practice-allocation-correct', 'practice-allocation-incorrect'));
+      updateCorrectAllocationCells();
       const allocations = readAllocations().allocations;
       renderRemainingStatus(allocations);
       renderFlow(allocations);
