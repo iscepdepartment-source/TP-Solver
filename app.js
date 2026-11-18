@@ -98,7 +98,7 @@
     installAria: ['Install TP Solver', 'I-install ang TP Solver'],
     installText: ['Install TP Solver on your device and use it like an app', 'I-install ang TP Solver sa iyong device at gamitin ito na parang app'],
     installButton: ['Install', 'I-install'],
-    installDismiss: ['Not now', 'Mamaya na'],
+    installClose: ['Close', 'Isara'],
     installIosHelp: ['On iPhone or iPad: tap the Share button in Safari, then choose &ldquo;Add to Home Screen&rdquo;.', 'Sa iPhone o iPad: pindutin ang Share button sa Safari, pagkatapos piliin ang &ldquo;Add to Home Screen&rdquo;.'],
     footerAI: ['The solver works offline. The TP Buddy assistant requires an internet connection.', 'Gumagana offline ang solver. Kailangan ng internet connection ang TP Buddy assistant.'],
     noResults: ['No solved problem yet.', 'Wala pang nalutas na problema.'],

@@ -758,41 +758,51 @@ body {
 }
 :root[data-theme="dark"] .practice-solution-quantity { color: #d7e6fb; }
 
-/* Install banner (PWA) */
+/* Install banner (PWA) - sits at the top and pushes the app down */
+:root { --install-banner-h: 0px; }
 .install-banner {
   position: fixed;
+  top: 0;
   right: 0;
-  bottom: 0;
   left: 0;
   z-index: 1080;
-  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
-  background: var(--gold);
-  color: var(--blue-dark);
-  box-shadow: 0 -4px 16px rgba(11, 42, 107, .25);
+  padding: 9px 52px 9px 16px;
+  background: #1ed760;
+  color: #000;
   text-align: center;
 }
 .install-banner[hidden] { display: none; }
-.install-banner-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; }
+.install-banner-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
 .install-banner-text { font-weight: 600; }
 .install-banner-btn {
-  min-height: 36px;
-  padding: 6px 18px;
-  border: 2px solid var(--blue-dark);
+  padding: 5px 18px;
+  border: 0;
   border-radius: 999px;
-  background: transparent;
-  color: var(--blue-dark);
+  background: #000;
+  color: #fff;
   font-weight: 700;
 }
 .install-banner-btn:hover,
-.install-banner-btn:focus-visible { background: rgba(11, 42, 107, .12); }
-.install-banner-primary { background: var(--blue-dark); color: #fff; }
-.install-banner-primary:hover,
-.install-banner-primary:focus-visible { background: var(--blue); color: #fff; }
-.install-banner-help { margin-top: 8px; font-size: .9rem; }
-body.has-install-banner { padding-bottom: 76px; }
-@media (max-width: 575.98px) {
-  body.has-install-banner { padding-bottom: 120px; }
+.install-banner-btn:focus-visible { background: #222; }
+.install-banner-close {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #000;
+  font-size: 1.5rem;
+  line-height: 1;
 }
+.install-banner-close:hover,
+.install-banner-close:focus-visible { background: rgba(0, 0, 0, .12); }
+.install-banner-help { margin-top: 6px; font-size: .9rem; }
+body.has-install-banner { padding-top: var(--install-banner-h); }
+body.has-install-banner .sidebar { top: var(--install-banner-h); }
 
 @media print {
   body { background: #fff; }

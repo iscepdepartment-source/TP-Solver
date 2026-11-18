@@ -26,10 +26,17 @@
     }
   }
 
+  // The banner is fixed at the top, so tell the page how tall it is and push the app down.
+  function updateOffset() {
+    document.documentElement.style.setProperty(
+      '--install-banner-h', banner && !banner.hidden ? banner.offsetHeight + 'px' : '0px');
+  }
+
   function showBanner() {
     if (!banner || isStandalone() || recentlyDismissed()) return;
     banner.hidden = false;
     document.body.classList.add('has-install-banner');
+    updateOffset();
   }
 
   function hideBanner() {
@@ -37,7 +44,12 @@
     banner.hidden = true;
     iosHelp.hidden = true;
     document.body.classList.remove('has-install-banner');
+    updateOffset();
   }
+
+  window.addEventListener('resize', updateOffset);
+  // Text can change size when the language changes or the iPhone steps open.
+  if (window.ResizeObserver && banner) new ResizeObserver(updateOffset).observe(banner);
 
   // Register the service worker (needed for the app to be installable and to work offline).
   if ('serviceWorker' in navigator && (window.isSecureContext || location.hostname === 'localhost')) {
