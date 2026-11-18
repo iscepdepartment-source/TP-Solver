@@ -1,0 +1,13 @@
+{
+  "name": "transportation-method",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Transportation problem solver (Least Cost Method) with an embedded Noupe chat assistant",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -17,6 +17,14 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="style.css" rel="stylesheet">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0b2a6b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="TP Solver">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 </head>
 <body>
 
@@ -131,7 +139,14 @@
             <option value="GBP">British Pound (£)</option>
           </select>
         </div>
-        <div class="col-12 col-md-3 d-flex flex-wrap gap-2">
+        <div class="col-12 col-md-3">
+          <label class="form-label" for="matrixInputMode" data-i18n="matrixInputMode">Matrix input</label>
+          <select class="form-select" id="matrixInputMode">
+            <option value="shipment-plan" data-i18n="matrixModeWithShipments">Costs and shipment quantities</option>
+            <option value="cost-only" data-i18n="matrixModeCostsOnly">Costs only</option>
+          </select>
+        </div>
+        <div class="col-12 d-flex flex-wrap gap-2">
           <button class="btn btn-primary" id="btnGenerate"><i class="bi bi-grid-3x3-gap"></i> <span data-i18n="generateMatrix">Generate Matrix</span></button>
           <button class="btn btn-outline-primary" id="btnSample"><i class="bi bi-lightbulb"></i> <span data-i18n="loadSample">Load Sample Problem</span></button>
         </div>
@@ -143,15 +158,18 @@
         <h2 data-i18n="transportMatrix">2. Transportation Matrix</h2>
         <span id="balanceBadge" class="badge text-bg-secondary" role="status" aria-live="polite">Totals: -</span>
       </div>
-      <p class="text-muted small mb-2" data-i18n="matrixHelp">Enter the unit transportation cost in each cell, the supply of each source, and the demand of each destination.</p>
+      <p class="text-muted small mb-2" id="matrixHelp" data-i18n="matrixHelp">Enter the unit transportation cost in each cell, the supply of each source, and the demand of each destination.</p>
       <div class="table-responsive">
         <table class="table table-bordered matrix-input text-center align-middle" id="inputMatrix"></table>
+      </div>
+      <div id="costOnlyNote" class="alert alert-warning small py-2 mt-2 mb-0" data-i18n="costOnlyNote" hidden>
+        Cost-only mode shows costs, supply, and demand without shipment quantities. Switch to Costs and shipment quantities to enter a plan and calculate a result.
       </div>
       <div id="balanceExplanation" class="alert alert-light border small py-2 mt-2 mb-0" aria-live="polite" data-i18n="balanceEqualExplain">Add all source supplies and all destination demands. Since the totals are equal, the problem is BALANCED.</div>
       <div id="allocationStatus" class="small text-muted mt-2" aria-live="polite"></div>
       <div class="row g-3 align-items-end mt-1">
         <div class="col-12">
-          <div class="alert alert-info py-2 mb-0" data-i18n="manualPlanNote">The quantities you enter are the complete shipment plan. This tool calculates the row supplies, column demands, and total cost; it does not add or choose extra shipments.</div>
+          <div class="alert alert-info py-2 mb-0" id="manualPlanNote" data-i18n="manualPlanNote">The quantities you enter are the complete shipment plan. This tool calculates the row supplies, column demands, and total cost; it does not add or choose extra shipments.</div>
         </div>
         <div class="col-12 d-flex flex-wrap gap-2 justify-content-md-end">
           <button class="btn btn-outline-secondary" id="btnResetInput"><i class="bi bi-arrow-counterclockwise"></i> <span data-i18n="reset">Reset</span></button>
@@ -386,27 +404,11 @@
       </div>
     </div>
   </section>
-</main>
 
-<div class="student-chat d-print-none" id="studentChat" hidden>
-  <button class="btn btn-primary student-chat-toggle" id="studentChatToggle" type="button" aria-expanded="false" aria-controls="studentChatPanel">
-    <i class="bi bi-chat-dots"></i> <span data-i18n="chatOpen">Help with this result</span>
-  </button>
-  <section class="student-chat-panel" id="studentChatPanel" aria-label="Problem guide" hidden>
-    <div class="student-chat-header">
-      <div>
-        <strong data-i18n="chatTitle">Understand this result</strong>
-        <div class="small" data-i18n="chatSubtitle">Choose a question about this problem</div>
-      </div>
-      <button class="btn btn-sm btn-outline-light" id="studentChatClose" type="button" data-i18n="chatClose" aria-label="Close chat">Close</button>
-    </div>
-    <div class="student-chat-messages" id="studentChatMessages" role="log" aria-live="polite">
-      <div class="chat-message assistant" id="studentChatWelcome"></div>
-      <div class="student-chat-questions" id="studentChatQuestions" role="group" aria-label="Questions about this problem"></div>
-    </div>
-    <div class="student-chat-foot small text-muted" data-i18n="chatNote">Answers are calculated from this problem. No AI or internet connection is needed.</div>
-  </section>
-</div>
+  <footer class="app-footer small text-muted" data-i18n="footerAI">
+    The solver and suggested explanations work offline. TP Buddy requires an internet connection.
+  </footer>
+</main>
 
 <section class="floating-calculator d-print-none" id="floatingCalculator" aria-label="Calculator" data-i18n-aria-label="calculatorTitle">
   <header class="calculator-header" id="calculatorDragHandle">
@@ -452,12 +454,21 @@
   <i class="bi bi-calculator" aria-hidden="true"></i>
 </button>
 
+<div class="install-banner d-print-none" id="installBanner" role="region" aria-label="Install TP Solver" data-i18n-aria-label="installAria" hidden>
+  <div class="install-banner-row">
+    <span class="install-banner-text" data-i18n="installText">Install TP Solver on your device and use it like an app</span>
+    <button class="install-banner-btn install-banner-primary" id="installAppButton" type="button" data-i18n="installButton">Install</button>
+    <button class="install-banner-btn" id="installDismissButton" type="button" data-i18n="installDismiss">Not now</button>
+  </div>
+  <div class="install-banner-help" id="installIosHelp" hidden data-i18n="installIosHelp">On iPhone or iPad: tap the Share button in Safari, then choose &ldquo;Add to Home Screen&rdquo;.</div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="lcm.js"></script>
 <script src="app.js"></script>
-<script src="chatbot.js"></script>
 <script src="practice.js"></script>
+<script src="install.js"></script>
 <script>
   (function () {
     const splash = document.querySelector('#introSplash');
@@ -479,5 +490,7 @@
     }, reducedMotion ? 100 : 2100);
   })();
 </script>
+
+<script src='https://www.noupe.com/embed/01a1ecc50bb87000892cdfa5bdd40705f197.js'></script>
 </body>
 </html>

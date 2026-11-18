@@ -1280,7 +1280,44 @@
     renderFlow(updatedAllocations);
   }
 
+  function getPracticeTPSolverContext() {
+    if (!practice || $('#practiceWorkspace').classList.contains('d-none')) return null;
+
+    const allocations = readAllocations().allocations;
+    const problem = practice.balanced;
+    const rowTotals = allocations.map((row) =>
+      row.reduce((sum, quantity) => sum + quantity, 0));
+    const columnTotals = problem.demand.map((_, column) =>
+      allocations.reduce((sum, row) => sum + row[column], 0));
+    const totalCost = allocations.reduce((sum, row, i) =>
+      sum + row.reduce((rowSum, quantity, j) =>
+        rowSum + quantity * problem.costs[i][j], 0), 0);
+
+    return {
+      mode: 'practice',
+      guidedStep: null,
+      practice: {
+        difficulty: practice.difficulty,
+        reviewingCompletedProblem: reviewMode,
+        solutionRevealed: solutionVisible
+      },
+      problem: {
+        supply: problem.supply,
+        demand: problem.demand,
+        costs: problem.costs,
+        shipments: allocations,
+        rowTotals,
+        columnTotals,
+        totalCost,
+        balanced: problem.balanced,
+        dummy: problem.dummy,
+        currency: $('#practiceCurrency').value
+      }
+    };
+  }
+
   function init() {
+    window.getPracticeTPSolverContext = getPracticeTPSolverContext;
     language = $('#languageSelect').value || 'en';
     $('#practiceGenerate').addEventListener('click', generate);
     $('#practiceCurrency').value = loadCurrency();

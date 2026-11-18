@@ -6,9 +6,14 @@
   const close = document.querySelector('#studentChatClose');
   const messages = document.querySelector('#studentChatMessages');
   const welcome = document.querySelector('#studentChatWelcome');
-  const questions = document.querySelector('#studentChatQuestions');
+  const quickReplies = document.querySelector('#studentChatQuestions');
+  const form = document.querySelector('#studentChatForm');
+  const input = document.querySelector('#studentChatInput');
+  const sendButton = document.querySelector('#studentChatSend');
   const currencySigns = { USD: '$', PHP: '₱', EUR: '€', GBP: '£' };
   let language = document.querySelector('#languageSelect').value || 'en';
+  let chatHistory = [];
+  let sending = false;
 
   const text = (english, tagalog) => language === 'tl'
     ? tagalog
@@ -22,14 +27,25 @@
     const message = document.createElement('div');
     message.className = 'chat-message ' + role;
     message.textContent = content;
-    messages.insertBefore(message, questions);
+    messages.insertBefore(message, quickReplies);
     messages.scrollTop = messages.scrollHeight;
   }
 
   function getContext() {
+    if (typeof window.getTPSolverContext === 'function') {
+      return window.getTPSolverContext();
+    }
     return typeof window.getTransportationChatContext === 'function'
       ? window.getTransportationChatContext()
-      : null;
+      : { mode: 'general', problem: null };
+  }
+
+  function rememberTurn(question, answer) {
+    chatHistory.push(
+      { role: 'user', text: question },
+      { role: 'assistant', text: answer }
+    );
+    if (chatHistory.length > 20) chatHistory.splice(0, chatHistory.length - 20);
   }
 
   function getMarginMismatches(problem) {
@@ -265,17 +281,17 @@
     const problem = context && context.problem;
     document.querySelector('#studentChatPanel').setAttribute(
       'aria-label',
-      text('Problem guide', 'Gabay sa problema')
+      text('TP Buddy chat', 'TP Buddy chat')
     );
-    questions.setAttribute('aria-label', text('Questions about this problem', 'Mga tanong tungkol sa problemang ito'));
+    quickReplies.setAttribute('aria-label', text('Questions about this result', 'Mga tanong tungkol sa resultang ito'));
     welcome.textContent = text(
-      'Choose a question to see an explanation using the numbers in your result.',
-      'Pumili ng tanong upang makita ang paliwanag gamit ang mga numero sa iyong resulta.'
+      'Hi! I’m TP Buddy. Ask me about transportation problems, or use a quick question about your result.',
+      'Hi! Ako si TP Buddy. Magtanong tungkol sa mga problema sa transportasyon o pumili ng mabilis na tanong tungkol sa resulta.'
     );
-    messages.querySelectorAll('.chat-message:not(#studentChatWelcome)').forEach((message) => message.remove());
-    questions.replaceChildren();
-
-    if (!problem) return;
+    quickReplies.replaceChildren();
+    const showResultQuestions = Boolean(problem && context.mode === 'results');
+    quickReplies.hidden = !showResultQuestions;
+    if (!showResultQuestions) return;
 
     getQuestions(problem).forEach((choice) => {
       const button = document.createElement('button');
@@ -289,10 +305,105 @@
           return;
         }
         addMessage(choice.label, 'user');
-        addMessage(getAnswer(choice.id, latestContext.problem, choice.data), 'assistant');
+        const answer = getAnswer(choice.id, latestContext.problem, choice.data);
+        addMessage(answer, 'assistant');
+        rememberTurn(choice.label, answer);
       });
-      questions.appendChild(button);
+      quickReplies.appendChild(button);
     });
+  }
+
+  async function sendQuestion(event) {
+    event.preventDefault();
+    const message = input.value.trim();
+    const context = getContext();
+    if (!message || sending) return;
+
+    sending = true;
+    input.disabled = true;
+    sendButton.disabled = true;
+    addMessage(message, 'user');
+    input.value = '';
+    const reply = document.createElement('div');
+    reply.className = 'chat-message assistant chat-thinking';
+    reply.setAttribute('role', 'status');
+    reply.setAttribute('aria-label', text('AI is thinking', 'Nag-iisip ang AI'));
+    const thinkingLabel = document.createElement('span');
+    thinkingLabel.textContent = text('Thinking', 'Nag-iisip');
+    const thinkingDots = document.createElement('span');
+    thinkingDots.className = 'chat-thinking-dots';
+    thinkingDots.setAttribute('aria-hidden', 'true');
+    thinkingDots.textContent = '...';
+    reply.append(thinkingLabel, thinkingDots);
+    messages.insertBefore(reply, quickReplies);
+    messages.scrollTop = messages.scrollHeight;
+
+    let requestTimeout;
+    try {
+      const endpoint = window.TP_BUDDY_API_URL;
+      if (typeof endpoint !== 'string' ||
+          !endpoint.trim() ||
+          endpoint.includes('YOUR-VERCEL-PROJECT')) {
+        throw new Error('TP Buddy is not connected yet. Replace the Vercel API URL in index.html after deployment.');
+      }
+
+      const controller = new AbortController();
+      requestTimeout = window.setTimeout(() => controller.abort(), 70000);
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: message,
+          context: context || null,
+          history: chatHistory,
+          language: language
+        }),
+        signal: controller.signal
+      });
+      let result;
+      try {
+        result = await response.json();
+      } catch {
+        throw new Error(text(
+          'The Vercel API did not return JSON. Check your deployment and API logs.',
+          'Hindi nagbalik ng JSON ang Vercel API. Suriin ang deployment at API logs.'
+        ));
+      }
+      if (!result || typeof result !== 'object') {
+        throw new Error('The Vercel API returned an invalid response. Check its deployment and logs.');
+      }
+      if (!response.ok) {
+        throw new Error(result.error || 'The AI service could not answer this question.');
+      }
+      if (typeof result.answer !== 'string' || !result.answer.trim()) {
+        throw new Error('The AI service returned an empty answer. Please try again.');
+      }
+
+      reply.textContent = result.answer;
+      rememberTurn(message, result.answer);
+    } catch (error) {
+      reply.classList.add('error');
+      const details = error.name === 'AbortError'
+        ? text(
+          'The AI request took too long. Check your internet connection and Vercel/Anthropic quota, then try again.',
+          'Masyadong natagalan ang AI request. Suriin ang internet connection at Vercel/Anthropic quota, pagkatapos subukan muli.'
+        )
+        : error.name === 'TypeError'
+          ? text(
+          'Cannot reach the Vercel API. Check the URL in index.html, deployment status, and allowed-origin configuration.',
+          'Hindi maabot ang Vercel API. Suriin ang URL sa index.html, deployment status, at allowed-origin configuration.'
+        )
+          : error.message;
+      reply.textContent = text('Could not get an AI response: ', 'Hindi makakuha ng sagot mula sa AI: ') + details;
+      input.value = message;
+    } finally {
+      window.clearTimeout(requestTimeout);
+      sending = false;
+      input.disabled = false;
+      sendButton.disabled = false;
+      input.focus();
+      messages.scrollTop = messages.scrollHeight;
+    }
   }
 
   function setOpen(open) {
@@ -303,10 +414,12 @@
 
   toggle.addEventListener('click', () => setOpen(panel.hidden));
   close.addEventListener('click', () => setOpen(false));
+  form.addEventListener('submit', sendQuestion);
   window.addEventListener('transportation-language-changed', (event) => {
     language = event.detail.language;
     renderQuestions();
   });
   window.addEventListener('transportation-problem-updated', renderQuestions);
+  window.addEventListener('transportation-view-changed', renderQuestions);
   renderQuestions();
 })();

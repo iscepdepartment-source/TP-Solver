@@ -1,23 +1,32 @@
-# Transportation Problem Solver
+# TP Solver
 
-Open `index.html` in a browser to use the solver and practice mode. Choose **Practice Mode**, select Easy, Medium, or Hard, and generate random problems. Enter your allocations, request a lowest-cost hint, check your work, and optionally reveal the LCM solution. The practice matrix heatmap and animated shipment-flow diagram update as you work.
+TP Solver is a static transportation-problem learning app (Least Cost Method). The solver is the source of truth for the displayed costs, supply, demand, allocations, and total cost.
 
-The interface adapts to mobile phones, tablets, and desktop screens, including Android and iOS browsers. On smaller screens, navigation collapses into a menu and wide matrices can be scrolled horizontally.
+On **New Problem**, choose **Costs and shipment quantities** for the usual complete plan entry, or **Costs only** to show the cost matrix without shipment boxes. Shipment-plan calculation is disabled in Costs-only mode.
 
-Easy, Medium, and Hard are available immediately. Progress toward the 20-problem goal for each difficulty is saved in the browser on the current device. A completed problem triggers a brief congratulations animation and a **Next Problem** button.
+## TP Buddy assistant (Noupe)
 
-Medium problems ask students to complete the shipment allocation table, multiply the unit cost by shipment quantity for each used route, and add those products to enter the total least cost. Hard problems add a rotating real-world distribution scenario and an unbalanced transportation matrix, followed by the same cost calculations. Factories and destination cities are labeled Factory1, Factory2, City1, City2, and so on. Hints point to the lowest available cost. The full LCM solution button unlocks after 15 minutes on Easy, 20 minutes on Medium, and 30 minutes on Hard. A timer tracks the time from generating the problem until the correct solution. Performance analytics save completion counts and solve times on the device, show the average of up to 100 recent attempts for each difficulty, and compare the latest five attempts with the previous five once there is enough history.
+The chat assistant is a [Noupe](https://www.noupe.com/) embed. It is loaded by a single script tag at the end of `index.html`:
 
-In Practice Mode, allocation feedback appears only after **Check My Allocations** is selected: correct cells are highlighted green and incorrect cells red. Incorrect shipment routes are also drawn in red and marked with an X. Editing an allocation clears the feedback until the next check.
+```html
+<script src='https://www.noupe.com/embed/01a1ecc50bb87000892cdfa5bdd40705f197.js'></script>
+```
 
-Students earn 10 points for each correctly completed problem. They can spend 5 points for a hint or 10 points to reveal the correct allocation in one selected cell. Points and practice analytics are saved locally in the browser.
+- No API key, Vercel function, or backend is needed. Nothing in this repo calls an AI provider.
+- The assistant's knowledge and behavior (answering questions about the Least Cost Method) are configured in your Noupe dashboard, not in this code. Add the Least Cost Method steps, the dummy row/column rules, degeneracy, and sample problems to its knowledge base/instructions there.
+- Noupe cannot see the solver's current matrix or results, so it answers from its own knowledge base only. Remind students to verify calculations against TP Solver.
+- The assistant requires an internet connection; the solver itself works offline.
 
-Correctly completed practice problems are also saved in a local **Completed Problems** review list (up to 250 entries). Select **Review** to reopen a problem with its original currency, scenario, completed allocations, and LCM reference solution. Reviewing does not change points or progression; choose **Generate a new problem** to return to practice.
+## Install as an app (PWA)
 
-After calculating a shipment plan, choose **Help with this result** to see questions generated from that specific solution, such as its balance totals, mismatched margins, largest shipment, lowest-cost route, and largest cost contribution. The interface, practice tools, and explanations are available in English, Tagalog, and Taglish (Tagalog-English). Your language choice is saved on this device. These features need no AI service, API key, server, or internet connection.
+TP Solver can be installed on a phone, tablet, or computer from a banner at the bottom of the page.
 
-Use the **Dark mode / Light mode** button in the top bar to switch appearance. The selected theme is saved in the browser on the current device.
+- `manifest.webmanifest` + `icons/` describe the app (name, colors, icons).
+- `sw.js` is the service worker. It caches the app so it opens offline. **Change `CACHE = 'tp-solver-v1'` to a new version (v2, v3, ...) every time you publish changes**, otherwise installed copies may keep showing old files.
+- `install.js` shows the banner. Chrome/Edge/Android get a one-tap **Install** button; iPhone/iPad Safari shows "Share -> Add to Home Screen" steps because Apple does not allow one-tap install. After the user taps **Not now**, the banner stays hidden for 7 days.
+- Installing needs HTTPS (GitHub Pages is fine) or `localhost`. All paths are relative, so it also works from a repo sub-path such as `https://<user>.github.io/<repo>/`.
 
-The floating **Calculator** is available throughout the app. When closed, it becomes a draggable calculator-icon button that can be moved out of the way and tapped to reopen. The calculator shows the current expression above the result, and supports basic arithmetic, percentages, decimals, sign changes, keyboard input, dragging by its header, resizing from its lower-right corner, and minimize/restore. Its size and position are saved in the browser.
+## Run locally
 
-Practice Mode has its own currency selector (US Dollar, Philippine Peso, Euro, or British Pound) for matrix costs and hints; its selection is saved separately from the New Problem currency.
+- `npm start` serves the static app at `http://127.0.0.1:3000`.
+- `npm test` runs `node --test` (there are currently no test files).

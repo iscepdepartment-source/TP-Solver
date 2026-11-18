@@ -159,6 +159,19 @@ body {
   width: 54px; min-width: 0; height: 24px; padding: 1px 3px;
   text-align: center; font-size: .75rem;
 }
+.matrix-input.cost-only-mode .cost-entry-cell { height: 52px; }
+.matrix-input.cost-only-mode .cost-entry-control {
+  top: 50%;
+  right: auto;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  gap: 4px;
+}
+.matrix-input.cost-only-mode .cost-entry-control input {
+  width: 72px;
+  height: 32px;
+  font-size: .9rem;
+}
 .matrix-input thead th, .matrix-input .row-label, .matrix-input .lab {
   background: var(--blue); color: #fff; font-weight: 600;
 }
@@ -178,40 +191,7 @@ body {
 .grand-total-value span { font-size: .72rem; font-weight: 500; }
 .grand-total-value strong { font-weight: 700; }
 
-.student-chat { position: fixed; right: 24px; bottom: 20px; z-index: 1050; }
-.student-chat-toggle { border-radius: 999px; box-shadow: 0 4px 16px rgba(17, 43, 91, .25); }
-.student-chat-panel {
-  position: absolute;
-  right: 0;
-  bottom: 56px;
-  display: flex;
-  flex-direction: column;
-  width: min(380px, calc(100vw - 28px));
-  height: min(540px, calc(100vh - 110px));
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 8px 32px rgba(17, 43, 91, .22);
-}
-.student-chat-panel[hidden] { display: none; }
-.student-chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  background: var(--blue);
-  color: #fff;
-}
-.student-chat-messages { display: flex; flex: 1; flex-direction: column; gap: 10px; overflow-y: auto; padding: 14px; }
-.chat-message { max-width: 90%; padding: 9px 11px; border-radius: 12px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .92rem; }
-.chat-message.assistant { align-self: flex-start; background: var(--blue-soft); color: var(--blue-dark); }
-.chat-message.user { align-self: flex-end; background: var(--blue); color: #fff; }
-.chat-message.error { background: #fff1f0; color: #842029; }
-.student-chat-questions { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
-.student-chat-question { max-width: 100%; text-align: left; white-space: normal; }
-.student-chat-foot { padding: 0 12px 10px; }
+.app-footer { padding: 18px 0 8px; text-align: center; }
 
 .floating-calculator {
   position: fixed;
@@ -580,15 +560,6 @@ body {
   .practice-matrix .practice-cost-cell { min-width: 96px; }
   .practice-matrix .practice-allocation { width: 68px; }
   .table-responsive { max-width: 100%; overflow-x: auto; touch-action: pan-x; }
-  .student-chat { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); }
-  .student-chat-panel {
-    position: fixed;
-    right: 8px;
-    bottom: calc(68px + env(safe-area-inset-bottom));
-    width: min(380px, calc(100vw - 16px));
-    height: min(540px, calc(100dvh - 92px - env(safe-area-inset-bottom)));
-    max-height: calc(100vh - 92px);
-  }
   .floating-calculator {
     right: 8px;
     bottom: calc(82px + env(safe-area-inset-bottom));
@@ -608,7 +579,6 @@ body {
   .btn { --bs-btn-padding-x: .65rem; }
   .practice-matrix .practice-cost-cell,
   .matrix-input .cost-entry-cell { min-width: 90px; }
-  .student-chat-panel { right: 4px; width: calc(100vw - 8px); }
 }
 
 @media (max-width: 575.98px) {
@@ -674,7 +644,6 @@ body {
 :root[data-theme="dark"] .panel,
 :root[data-theme="dark"] .stat-card,
 :root[data-theme="dark"] .step-card,
-:root[data-theme="dark"] .student-chat-panel,
 :root[data-theme="dark"] .floating-calculator,
 :root[data-theme="dark"] .tp-table,
 :root[data-theme="dark"] .practice-level-progress,
@@ -694,7 +663,6 @@ body {
 }
 :root[data-theme="dark"] .practice-celebration h3,
 :root[data-theme="dark"] .practice-celebration p { color: #e5e7eb; }
-:root[data-theme="dark"] .student-chat-messages { background: #1b2533; }
 :root[data-theme="dark"] .calculator-display { border-color: var(--border); background: #111827; color: var(--text); }
 :root[data-theme="dark"] .calculator-key { border-color: #526074; background: #263241; color: #e5e7eb; }
 :root[data-theme="dark"] .calculator-key:hover,
@@ -702,8 +670,6 @@ body {
 :root[data-theme="dark"] .calculator-key.calculator-function { background: #202c3b; }
 :root[data-theme="dark"] .calculator-key.calculator-operator { background: #493c18; color: #ffe8ad; }
 :root[data-theme="dark"] .calculator-key.calculator-equals { background: var(--blue); color: #fff; }
-:root[data-theme="dark"] .chat-message.assistant { background: #263b55; color: #e5e7eb; }
-:root[data-theme="dark"] .chat-message.error { background: #482b30; color: #ffd5d8; }
 :root[data-theme="dark"] .form-control,
 :root[data-theme="dark"] .form-select {
   background-color: #111827;
@@ -792,9 +758,45 @@ body {
 }
 :root[data-theme="dark"] .practice-solution-quantity { color: #d7e6fb; }
 
+/* Install banner (PWA) */
+.install-banner {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1080;
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  background: var(--gold);
+  color: var(--blue-dark);
+  box-shadow: 0 -4px 16px rgba(11, 42, 107, .25);
+  text-align: center;
+}
+.install-banner[hidden] { display: none; }
+.install-banner-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; }
+.install-banner-text { font-weight: 600; }
+.install-banner-btn {
+  min-height: 36px;
+  padding: 6px 18px;
+  border: 2px solid var(--blue-dark);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--blue-dark);
+  font-weight: 700;
+}
+.install-banner-btn:hover,
+.install-banner-btn:focus-visible { background: rgba(11, 42, 107, .12); }
+.install-banner-primary { background: var(--blue-dark); color: #fff; }
+.install-banner-primary:hover,
+.install-banner-primary:focus-visible { background: var(--blue); color: #fff; }
+.install-banner-help { margin-top: 8px; font-size: .9rem; }
+body.has-install-banner { padding-bottom: 76px; }
+@media (max-width: 575.98px) {
+  body.has-install-banner { padding-bottom: 120px; }
+}
+
 @media print {
   body { background: #fff; }
-  .sidebar, .topbar, #alertBox, .d-print-none, .student-chat { display: none !important; }
+  .sidebar, .topbar, #alertBox, .d-print-none, .install-banner { display: none !important; }
   .content { margin: 0; padding: 0; max-width: none; }
   .panel, .step-card { box-shadow: none; break-inside: avoid; }
   .result-section { break-inside: auto; }

@@ -58,6 +58,11 @@
     sourcesCount: ['Number of sources (rows)', 'Bilang ng mga pinagmulan (mga hilera)'],
     destinationsCount: ['Number of destinations (columns)', 'Bilang ng mga destinasyon (mga kolum)'],
     currency: ['Currency sign', 'Simbolo ng pera'],
+    matrixInputMode: ['Matrix input', 'Paglalagay sa matrix'],
+    matrixModeWithShipments: ['Costs and shipment quantities', 'Gastos at dami ng padala'],
+    matrixModeCostsOnly: ['Costs only', 'Gastos lamang'],
+    matrixCostOnlyHelp: ['Enter unit costs in each route cell and enter supply and demand in the margins. Shipment quantities are hidden in this mode.', 'Ilagay ang gastos bawat yunit sa bawat ruta at ang supply at demand sa mga gilid. Nakatago ang dami ng padala sa mode na ito.'],
+    costOnlyNote: ['Cost-only mode shows costs, supply, and demand without shipment quantities. Switch to Costs and shipment quantities to enter a plan and calculate a result.', 'Ipinapakita ng mode na gastos lamang ang costs, supply, at demand nang walang dami ng padala. Lumipat sa Gastos at dami ng padala para maglagay ng plano at magkalkula ng resulta.'],
     generateMatrix: ['Generate Matrix', 'Buuin ang Matrix'],
     loadSample: ['Load Sample Problem', 'Mag-load ng Halimbawang Problema'],
     transportMatrix: ['2. Transportation Matrix', '2. Matrix ng Transportasyon'],
@@ -90,15 +95,12 @@
     planFulfillment: ['Shipment plan compared with requirements', 'Paghahambing ng plano ng padala sa mga kinakailangan'],
     dummyForBalanceOnly: ['A dummy row or column is shown to balance the totals for comparison. No shipments are automatically assigned to it.', 'Ipinapakita ang dummy row o column upang mapantay ang kabuuan para sa paghahambing. Walang awtomatikong inilalagay na padala rito.'],
     manualTotalNote: ['The total is calculated from the exact quantities entered above; the method did not choose or optimize those quantities.', 'Kinuwenta ang kabuuang gastos mula mismo sa mga inilagay na quantity; hindi pinili o in-optimize ng pamamaraan ang mga quantity na iyon.'],
-    chatOpen: ['Help with this result', 'Tulong sa resultang ito'],
-    chatTitle: ['Understand this result', 'Unawain ang Resulta'],
-    chatSubtitle: ['Choose a question about this problem', 'Pumili ng tanong tungkol sa problemang ito'],
-    chatClose: ['Close', 'Isara'],
-    chatQuestionBalance: ['What does the balance status mean?', 'Ano ang ibig sabihin ng status ng balanse?'],
-    chatQuestionTotals: ['How were the supply and demand totals calculated?', 'Paano kinuwenta ang kabuuang supply at demand?'],
-    chatQuestionFulfillment: ['Does my shipment plan meet the requirements?', 'Natugunan ba ng plano ng padala ang mga kinakailangan?'],
-    chatQuestionCost: ['How was the total transportation cost calculated?', 'Paano kinuwenta ang kabuuang gastos sa transportasyon?'],
-    chatNote: ['Answers are calculated from this problem. No AI or internet connection is needed.', 'Kinukuwenta ang mga sagot mula sa problemang ito. Hindi kailangan ng AI o internet connection.'],
+    installAria: ['Install TP Solver', 'I-install ang TP Solver'],
+    installText: ['Install TP Solver on your device and use it like an app', 'I-install ang TP Solver sa iyong device at gamitin ito na parang app'],
+    installButton: ['Install', 'I-install'],
+    installDismiss: ['Not now', 'Mamaya na'],
+    installIosHelp: ['On iPhone or iPad: tap the Share button in Safari, then choose &ldquo;Add to Home Screen&rdquo;.', 'Sa iPhone o iPad: pindutin ang Share button sa Safari, pagkatapos piliin ang &ldquo;Add to Home Screen&rdquo;.'],
+    footerAI: ['The solver works offline. The TP Buddy assistant requires an internet connection.', 'Gumagana offline ang solver. Kailangan ng internet connection ang TP Buddy assistant.'],
     noResults: ['No solved problem yet.', 'Wala pang nalutas na problema.'],
     enterProblem: ['Enter a problem', 'Maglagay ng problema'],
     printResults: ['Print Results', 'I-print ang mga Resulta'],
@@ -131,10 +133,11 @@
     totalCost: 'Total Cost',
     problemSize: 'Problem Size',
     transportMatrix: 'Transportation Matrix',
+    matrixInputMode: 'Matrix input',
+    matrixModeWithShipments: 'Costs and shipment quantities',
+    matrixModeCostsOnly: 'Costs only',
     solve: 'Calculate Shipment Plan',
     reset: 'Reset',
-    chatOpen: 'Help with this result',
-    chatTitle: 'Understand this result',
     noResults: 'Wala pang solved problem.'
   };
   const taglishTerms = [
@@ -213,6 +216,7 @@
     })[$('.sidebar .nav-link.active').dataset.view];
     renderDashboard();
     updateMarginalTotals();
+    updateMatrixInputMode();
     if (current) renderResults(current.input, current.result, current.currency);
     window.dispatchEvent(new CustomEvent('transportation-language-changed', { detail: { language: language } }));
   }
@@ -248,6 +252,7 @@
 
   const STORE = { solved: 'tp_lcm_solved', history: 'tp_lcm_history', last: 'tp_lcm_last' };
   let current = null; // { input, result }
+  let hiddenAllocationValues = {};
   let guidedIndex = 0;
   let guidedShowExplanation = false;
   let guidedShowCalculation = false;
@@ -275,7 +280,7 @@
     })[name];
     $('#sidebar').classList.remove('open');
     $('#menuToggle').setAttribute('aria-expanded', 'false');
-    $('#studentChat').hidden = name !== 'results' || !current;
+    window.dispatchEvent(new CustomEvent('transportation-view-changed', { detail: { view: name } }));
     if (name === 'dashboard') renderDashboard();
     window.scrollTo(0, 0);
   }
@@ -749,12 +754,29 @@
     $$('.alloc-in').forEach((e) => { alloc[e.dataset.i + ',' + e.dataset.j] = e.value; });
     $$('.sup-in').forEach((e) => { sup[e.dataset.i] = e.value; });
     $$('.dem-in').forEach((e) => { dem[e.dataset.j] = e.value; });
+    if (Object.keys(alloc).length) hiddenAllocationValues = { ...alloc };
+    else Object.assign(alloc, hiddenAllocationValues);
     return { cost, alloc, sup, dem };
   }
 
   function updateCostCurrencySigns() {
     const sign = CURRENCY_SIGNS[$('#currency').value] || CURRENCY_SIGNS.USD;
     $$('.cost-entry-symbol').forEach((el) => { el.textContent = sign; });
+  }
+
+  function isCostOnlyMode() {
+    return $('#matrixInputMode').value === 'cost-only';
+  }
+
+  function updateMatrixInputMode() {
+    const costOnly = isCostOnlyMode();
+    $('#matrixHelp').textContent = staticText(costOnly ? 'matrixCostOnlyHelp' : 'matrixHelp');
+    $('#inputMatrix').classList.toggle('cost-only-mode', costOnly);
+    $('#costOnlyNote').hidden = !costOnly;
+    $('#manualPlanNote').hidden = costOnly;
+    $('#allocationStatus').hidden = costOnly;
+    $('#btnSolve').disabled = costOnly;
+    if (costOnly) $('#allocationStatus').textContent = '';
   }
 
   function buildMatrix(prefill) {
@@ -765,8 +787,11 @@
     }
     clearAlert();
     const { m, n } = size;
+    if (!prefill) hiddenAllocationValues = {};
     const pf = prefill || { cost: {}, alloc: {}, sup: {}, dem: {} };
+    if (prefill && prefill.alloc) hiddenAllocationValues = { ...prefill.alloc };
     const val = (v) => (v === undefined || v === null ? '' : v);
+    const costOnly = isCostOnlyMode();
 
     let html = '<thead><tr><th></th>';
     for (let j = 0; j < n; j++) html += '<th>City' + (j + 1) + '</th>';
@@ -774,9 +799,13 @@
     for (let i = 0; i < m; i++) {
       html += '<tr><th class="row-label">Factory' + (i + 1) + '</th>';
       for (let j = 0; j < n; j++) {
-        html += '<td class="cost-entry-cell"><input type="number" min="0" step="any" class="form-control form-control-sm alloc-in" data-i="' + i + '" data-j="' + j +
-          '" aria-label="' + staticText('shipmentQuantity') + ' Factory' + (i + 1) + ' ' + tr('to', 'papuntang') + ' City' + (j + 1) +
-          '" value="' + val(pf.alloc && pf.alloc[i + ',' + j]) + '"><div class="cost-entry-control"><span class="cost-entry-symbol" aria-hidden="true">' +
+        html += '<td class="cost-entry-cell">';
+        if (!costOnly) {
+          html += '<input type="number" min="0" step="any" class="form-control form-control-sm alloc-in" data-i="' + i + '" data-j="' + j +
+            '" aria-label="' + staticText('shipmentQuantity') + ' Factory' + (i + 1) + ' ' + tr('to', 'papuntang') + ' City' + (j + 1) +
+            '" value="' + val(pf.alloc && pf.alloc[i + ',' + j]) + '">';
+        }
+        html += '<div class="cost-entry-control"><span class="cost-entry-symbol" aria-hidden="true">' +
           (CURRENCY_SIGNS[$('#currency').value] || CURRENCY_SIGNS.USD) + '</span><input type="number" min="0" step="any" class="form-control form-control-sm cost-in" data-i="' + i + '" data-j="' + j +
           '" aria-label="' + tr('Unit cost', 'Gastos bawat yunit') + ' Factory' + (i + 1) + ' ' + tr('to', 'papuntang') + ' City' + (j + 1) + '" value="' + val(pf.cost[i + ',' + j]) + '"></div></td>';
       }
@@ -790,6 +819,7 @@
     }
     html += '<td class="lab grand-total-cell" id="totalsCell">-</td></tr></tbody>';
     $('#inputMatrix').innerHTML = html;
+    updateMatrixInputMode();
     updateCostCurrencySigns();
     updateMarginalTotals();
     return true;
@@ -842,6 +872,10 @@
   function updateAllocationStatus() {
     const target = $('#allocationStatus');
     if (!target) return;
+    if (isCostOnlyMode()) {
+      target.textContent = '';
+      return;
+    }
     const sources = $$('.sup-in');
     const destinations = $$('.dem-in');
     if (!sources.length || !destinations.length) {
@@ -898,6 +932,10 @@
 
 
   function readInputs() {
+    if (isCostOnlyMode()) {
+      showAlert(staticText('costOnlyNote'), 'warning');
+      return null;
+    }
     const size = readSize();
     if (!size) { showAlert(tr('Number of sources and destinations must be whole numbers from 1 to 10.', 'Ang bilang ng pinagmulan at destinasyon ay dapat buong bilang mula 1 hanggang 10.')); return null; }
     if (!$$('.cost-in').length) { showAlert(tr('Generate the matrix first.', 'Buuin muna ang matrix.')); return null; }
@@ -1303,10 +1341,37 @@
   }
 
   function getTransportationChatContext() {
-    if (!current || $('#view-results').classList.contains('d-none')) return null;
+    const activeView = document.querySelector('.view:not(.d-none)');
+    const viewName = activeView ? activeView.id.replace('view-', '') : 'general';
+    if (viewName === 'practice') {
+      if (typeof window.getPracticeTPSolverContext === 'function') {
+        const practiceContext = window.getPracticeTPSolverContext();
+        if (practiceContext) return practiceContext;
+      }
+      return { mode: 'practice', problem: null, guidedStep: null };
+    }
+
+    if (!current) {
+      return { mode: viewName, problem: null, guidedStep: null };
+    }
     const input = current.input;
     const result = current.result;
+    const stages = guidedStages(result);
+    const stage = stages[guidedIndex];
     return {
+      mode: viewName === 'results' ? 'results' : 'general',
+      guidedStep: {
+        number: guidedIndex + 1,
+        total: stages.length,
+        kind: stage.kind,
+        allocation: stage.kind === 'allocation'
+          ? {
+            route: stage.cell,
+            unitCost: stage.cost,
+            quantity: stage.quantity
+          }
+          : null
+      },
       problem: {
         supply: input.supply,
         demand: input.demand,
@@ -1326,6 +1391,7 @@
 
   function init() {
     window.getTransportationChatContext = getTransportationChatContext;
+    window.getTPSolverContext = getTransportationChatContext;
     $$('.sidebar .nav-link').forEach((a) => a.addEventListener('click', (e) => {
       e.preventDefault();
       clearAlert();
@@ -1346,7 +1412,14 @@
     });
 
     $('#btnGenerate').addEventListener('click', () => buildMatrix(captureValues()));
-    $('#btnSample').addEventListener('click', () => { fillProblem(SAMPLE); clearAlert(); });
+    $('#matrixInputMode').addEventListener('change', () => {
+      buildMatrix(captureValues());
+    });
+    $('#btnSample').addEventListener('click', () => {
+      $('#matrixInputMode').value = 'shipment-plan';
+      fillProblem(SAMPLE);
+      clearAlert();
+    });
     $('#btnSolve').addEventListener('click', onSolve);
     $('#btnResetInput').addEventListener('click', resetInput);
     $('#inputMatrix').addEventListener('input', () => {
