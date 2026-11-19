@@ -56,6 +56,142 @@
       destinationPlaces: ['five public schools', 'limang public schools']
     }
   ];
+  // More hard stories (4 sources x 5 destinations, unbalanced)
+  hardScenarios.push(
+    {
+      title: ['Rice relief shipments', 'Mga shipment ng relief na bigas'],
+      text: [
+        'A relief group must truck sacks of rice from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory4 are the rice warehouses and columns City1–City5 are the barangay distribution points. The matrix shows the sacks available at each warehouse and the sacks each point asked for. Each route cost is the cost of trucking one sack. Use the Least Cost Method, check whether supply and demand balance, and find the total least cost.',
+        'Kailangang ihatid ng isang relief group ang mga sako ng bigas mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory4 ay ang mga bodega ng bigas at ang columns City1–City5 ay ang mga distribution point sa barangay. Nasa matrix ang available na sako sa bawat bodega at ang hinihingi ng bawat point. Ang route cost ay gastos sa pagpapadala ng isang sako. Gamitin ang Least Cost Method, suriin kung balance ang supply at demand, at hanapin ang kabuuang least cost.'
+      ],
+      sourcePlaces: ['four rice warehouses', 'apat na bodega ng bigas'],
+      destinationPlaces: ['five barangay distribution points', 'limang distribution point sa barangay']
+    },
+    {
+      title: ['Fuel depot deliveries', 'Paghahatid ng gasolina mula sa depot'],
+      text: [
+        'A fuel company must deliver drums of diesel from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory4 are the fuel depots and columns City1–City5 are the gas stations. The matrix lists the drums available at each depot and the drums each station ordered. Each route cost is the delivery cost of one drum. Apply the Least Cost Method, account for any supply–demand imbalance, and calculate the total least cost.',
+        'Kailangang maghatid ang isang kompanya ng gasolina ng mga drum ng diesel mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory4 ay ang mga fuel depot at ang columns City1–City5 ay ang mga gas station. Nasa matrix ang available na drum sa bawat depot at ang inorder ng bawat station. Ang route cost ay gastos sa paghahatid ng isang drum. Gamitin ang Least Cost Method, isaalang-alang ang hindi pagtutugma ng supply at demand, at kuwentahin ang kabuuang least cost.'
+      ],
+      sourcePlaces: ['four fuel depots', 'apat na fuel depot'],
+      destinationPlaces: ['five gas stations', 'limang gas station']
+    },
+    {
+      title: ['Hygiene kit distribution', 'Pamamahagi ng hygiene kits'],
+      text: [
+        'A health office is sending hygiene kits from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory4 are the storage centers and columns City1–City5 are the shelters. The matrix shows the kits in stock at each center and the kits each shelter needs. Each route cost is the cost of delivering one kit. Plan the shipments with the Least Cost Method, compare total supply and demand, and calculate the total least cost.',
+        'Nagpapadala ang isang health office ng hygiene kits mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory4 ay ang mga storage center at ang columns City1–City5 ay ang mga shelter. Nasa matrix ang kits na nasa stock sa bawat center at ang kailangan ng bawat shelter. Ang route cost ay gastos sa paghahatid ng isang kit. Planuhin ang shipments gamit ang Least Cost Method, ikumpara ang total supply at demand, at kuwentahin ang kabuuang least cost.'
+      ],
+      sourcePlaces: ['four storage centers', 'apat na storage center'],
+      destinationPlaces: ['five shelters', 'limang shelter']
+    },
+    {
+      title: ['Online parcel hubs', 'Mga parcel hub ng online shop'],
+      text: [
+        'An online store must move parcels from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory4 are the fulfillment warehouses and columns City1–City5 are the city sorting hubs. The matrix shows the parcels ready at each warehouse and the parcels each hub must receive. Each route cost is the cost of moving one parcel. Use the Least Cost Method, check the supply–demand balance, and find the total least cost.',
+        'Kailangang ilipat ng isang online store ang mga parcel mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory4 ay ang mga fulfillment warehouse at ang columns City1–City5 ay ang mga sorting hub sa lungsod. Nasa matrix ang parcel na handa sa bawat warehouse at ang dapat matanggap ng bawat hub. Ang route cost ay gastos sa paglipat ng isang parcel. Gamitin ang Least Cost Method, suriin ang balance ng supply at demand, at hanapin ang kabuuang least cost.'
+      ],
+      sourcePlaces: ['four fulfillment warehouses', 'apat na fulfillment warehouse'],
+      destinationPlaces: ['five sorting hubs', 'limang sorting hub']
+    }
+  );
+
+  // Easy and medium stories use the real table size through {rowCount} and {colCount}.
+  const easyScenarios = [
+    {
+      title: ['Bakery deliveries', 'Paghahatid ng tinapay'],
+      text: [
+        'A bakery chain delivers boxes of bread from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory{rowCount} are the bakeries and columns City1–City{colCount} are the stores. The matrix shows the boxes each bakery can send and the boxes each store needs. Each route cost is the cost of delivering one box. Use the Least Cost Method to fill the allocation table.',
+        'Naghahatid ang isang bakery chain ng mga kahon ng tinapay mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory{rowCount} ay ang mga bakery at ang columns City1–City{colCount} ay ang mga tindahan. Nasa matrix ang kahon na kayang ipadala ng bawat bakery at ang kailangan ng bawat tindahan. Ang route cost ay gastos sa paghahatid ng isang kahon. Gamitin ang Least Cost Method para punan ang allocation table.'
+      ],
+      sourcePlaces: ['its bakeries', 'mga bakery nito'],
+      destinationPlaces: ['the stores it supplies', 'mga tindahang binibigyan nito']
+    },
+    {
+      title: ['Water refilling stations', 'Mga water refilling station'],
+      text: [
+        'A water company sends jugs of drinking water from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory{rowCount} are the refilling stations and columns City1–City{colCount} are the neighborhoods. The matrix lists the jugs each station has and the jugs each neighborhood ordered. Each route cost is the cost of delivering one jug. Use the Least Cost Method to plan the deliveries.',
+        'Nagpapadala ang isang kompanya ng tubig ng mga jug ng inuming tubig mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory{rowCount} ay ang mga refilling station at ang columns City1–City{colCount} ay ang mga kapitbahayan. Nasa matrix ang jug ng bawat station at ang inorder ng bawat kapitbahayan. Ang route cost ay gastos sa paghahatid ng isang jug. Gamitin ang Least Cost Method para planuhin ang mga delivery.'
+      ],
+      sourcePlaces: ['its refilling stations', 'mga refilling station nito'],
+      destinationPlaces: ['nearby neighborhoods', 'mga kalapit na kapitbahayan']
+    },
+    {
+      title: ['Online shop parcels', 'Mga parcel ng online shop'],
+      text: [
+        'An online shop moves parcels from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory{rowCount} are the warehouses and columns City1–City{colCount} are the drop-off points. The matrix shows the parcels at each warehouse and the parcels each drop-off point expects. Each route cost is the cost of moving one parcel. Apply the Least Cost Method to find the shipment plan.',
+        'Naglilipat ang isang online shop ng mga parcel mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory{rowCount} ay ang mga warehouse at ang columns City1–City{colCount} ay ang mga drop-off point. Nasa matrix ang parcel sa bawat warehouse at ang inaasahan ng bawat drop-off point. Ang route cost ay gastos sa paglipat ng isang parcel. Gamitin ang Least Cost Method para mahanap ang shipment plan.'
+      ],
+      sourcePlaces: ['its warehouses', 'mga warehouse nito'],
+      destinationPlaces: ['the drop-off points', 'mga drop-off point']
+    },
+    {
+      title: ['School lunch packs', 'Mga lunch pack para sa paaralan'],
+      text: [
+        'A feeding program prepares lunch packs in {sourcePlaces} and sends them to {destinationPlaces}. Rows Factory1–Factory{rowCount} are the kitchens and columns City1–City{colCount} are the schools. The matrix lists the packs each kitchen can prepare and the packs each school needs. Each route cost is the cost of delivering one pack. Use the Least Cost Method to assign the deliveries.',
+        'Naghahanda ang isang feeding program ng lunch packs sa {sourcePlaces} at ipinapadala ang mga ito sa {destinationPlaces}. Ang rows Factory1–Factory{rowCount} ay ang mga kusina at ang columns City1–City{colCount} ay ang mga paaralan. Nasa matrix ang packs na kayang ihanda ng bawat kusina at ang kailangan ng bawat paaralan. Ang route cost ay gastos sa paghahatid ng isang pack. Gamitin ang Least Cost Method para italaga ang mga delivery.'
+      ],
+      sourcePlaces: ['community kitchens', 'mga kusina ng komunidad'],
+      destinationPlaces: ['partner schools', 'mga katuwang na paaralan']
+    },
+    {
+      title: ['Palengke vegetable run', 'Biyahe ng gulay papuntang palengke'],
+      text: [
+        'A farmers’ group trucks crates of vegetables from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory{rowCount} are the farms and columns City1–City{colCount} are the market stalls. The matrix shows the crates each farm harvested and the crates each stall wants. Each route cost is the cost of sending one crate. Use the Least Cost Method to plan the trips.',
+        'Nagta-truck ang isang grupo ng magsasaka ng crates ng gulay mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory{rowCount} ay ang mga farm at ang columns City1–City{colCount} ay ang mga pwesto sa palengke. Nasa matrix ang crates na naani ng bawat farm at ang gusto ng bawat pwesto. Ang route cost ay gastos sa pagpapadala ng isang crate. Gamitin ang Least Cost Method para planuhin ang mga biyahe.'
+      ],
+      sourcePlaces: ['local farms', 'mga lokal na farm'],
+      destinationPlaces: ['the market stalls', 'mga pwesto sa palengke']
+    }
+  ];
+  const mediumScenarios = [
+    {
+      title: ['Bottled drink distribution', 'Pamamahagi ng bottled drinks'],
+      text: [
+        'A beverage company ships cases of bottled drinks from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory{rowCount} are the plants and columns City1–City{colCount} are the distributors. The matrix shows the cases each plant can supply and the cases each distributor ordered. Each route cost is the cost of shipping one case. Use the Least Cost Method, then multiply each shipment by its unit cost and add the products to get the total least cost.',
+        'Nagpapadala ang isang kompanya ng inumin ng mga case ng bottled drinks mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory{rowCount} ay ang mga planta at ang columns City1–City{colCount} ay ang mga distributor. Nasa matrix ang case na kayang ibigay ng bawat planta at ang inorder ng bawat distributor. Ang route cost ay gastos sa pagpapadala ng isang case. Gamitin ang Least Cost Method, pagkatapos i-multiply ang bawat shipment sa unit cost nito at idagdag ang mga produkto para makuha ang kabuuang least cost.'
+      ],
+      sourcePlaces: ['its plants', 'mga planta nito'],
+      destinationPlaces: ['its distributors', 'mga distributor nito']
+    },
+    {
+      title: ['Construction materials', 'Mga materyales sa konstruksiyon'],
+      text: [
+        'A builder sends bags of cement from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory{rowCount} are the supply depots and columns City1–City{colCount} are the project sites. The matrix lists the bags at each depot and the bags each site needs. Each route cost is the cost of hauling one bag. Plan the shipments with the Least Cost Method and calculate the total least cost.',
+        'Nagpapadala ang isang kontratista ng mga sako ng semento mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory{rowCount} ay ang mga supply depot at ang columns City1–City{colCount} ay ang mga project site. Nasa matrix ang sako sa bawat depot at ang kailangan ng bawat site. Ang route cost ay gastos sa pagbiyahe ng isang sako. Planuhin ang shipments gamit ang Least Cost Method at kuwentahin ang kabuuang least cost.'
+      ],
+      sourcePlaces: ['its supply depots', 'mga supply depot nito'],
+      destinationPlaces: ['the project sites', 'mga project site']
+    },
+    {
+      title: ['Textbook distribution', 'Pamamahagi ng mga aklat'],
+      text: [
+        'A division office sends textbooks from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory{rowCount} are the book storage rooms and columns City1–City{colCount} are the school districts. The matrix shows the books in each storage room and the books each district requested. Each route cost is the cost of delivering one book. Use the Least Cost Method, then compute the total least cost.',
+        'Nagpapadala ang isang division office ng mga aklat mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory{rowCount} ay ang mga imbakan ng aklat at ang columns City1–City{colCount} ay ang mga school district. Nasa matrix ang aklat sa bawat imbakan at ang hiniling ng bawat district. Ang route cost ay gastos sa paghahatid ng isang aklat. Gamitin ang Least Cost Method, pagkatapos kuwentahin ang kabuuang least cost.'
+      ],
+      sourcePlaces: ['its storage rooms', 'mga imbakan nito'],
+      destinationPlaces: ['the school districts', 'mga school district']
+    },
+    {
+      title: ['Fish catch delivery', 'Paghahatid ng huling isda'],
+      text: [
+        'A fishers’ cooperative ships crates of fresh fish from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory{rowCount} are the fishing ports and columns City1–City{colCount} are the public markets. The matrix lists the crates landed at each port and the crates each market wants. Each route cost is the cost of sending one crate. Apply the Least Cost Method and find the total least cost.',
+        'Nagpapadala ang isang kooperatiba ng mangingisda ng crates ng sariwang isda mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory{rowCount} ay ang mga pantalan at ang columns City1–City{colCount} ay ang mga pampublikong palengke. Nasa matrix ang crates na dumaong sa bawat pantalan at ang gusto ng bawat palengke. Ang route cost ay gastos sa pagpapadala ng isang crate. Gamitin ang Least Cost Method at hanapin ang kabuuang least cost.'
+      ],
+      sourcePlaces: ['its fishing ports', 'mga pantalan nito'],
+      destinationPlaces: ['the public markets', 'mga pampublikong palengke']
+    },
+    {
+      title: ['Solar lamp donations', 'Donasyong solar lamp'],
+      text: [
+        'A charity distributes solar lamps from {sourcePlaces} to {destinationPlaces}. Rows Factory1–Factory{rowCount} are the donation centers and columns City1–City{colCount} are the island communities. The matrix shows the lamps at each center and the lamps each community needs. Each route cost is the cost of delivering one lamp. Use the Least Cost Method to plan the shipments, then calculate the total least cost.',
+        'Namamahagi ang isang charity ng mga solar lamp mula sa {sourcePlaces} papunta sa {destinationPlaces}. Ang rows Factory1–Factory{rowCount} ay ang mga donation center at ang columns City1–City{colCount} ay ang mga pamayanan sa isla. Nasa matrix ang lamp sa bawat center at ang kailangan ng bawat pamayanan. Ang route cost ay gastos sa paghahatid ng isang lamp. Gamitin ang Least Cost Method para planuhin ang shipments, pagkatapos kuwentahin ang kabuuang least cost.'
+      ],
+      sourcePlaces: ['its donation centers', 'mga donation center nito'],
+      destinationPlaces: ['island communities', 'mga pamayanan sa isla']
+    }
+  ];
+  const scenarioPools = { easy: easyScenarios, medium: mediumScenarios, hard: hardScenarios };
   const uiText = {
     title: ['Random Practice Problems', 'Mga Random na Problema sa Pagsasanay'],
     intro: ['Choose a difficulty and generate a new transportation problem. Enter allocations using the Least Cost Method, then check your work.', 'Pumili ng antas at bumuo ng bagong problema sa transportasyon. Ilagay ang mga alokasyon gamit ang Least Cost Method, pagkatapos ay suriin ang sagot.'],
@@ -692,9 +828,8 @@
       shuffledCosts.slice(i * columns, (i + 1) * columns));
     const balanced = LCM.balanceProblem(costs, supply, demand);
     const solution = LCM.solveLCM(costs, supply, demand, 'first');
-    const scenario = difficulty === 'hard'
-      ? hardScenarios[randInt(0, hardScenarios.length - 1)]
-      : null;
+    const pool = scenarioPools[difficulty] || [];
+    const scenario = pool.length ? pool[randInt(0, pool.length - 1)] : null;
 
     return { difficulty, costs, supply, demand, balanced, solution, scenario };
   }
@@ -712,7 +847,9 @@
       text(practice.scenario.text[0], practice.scenario.text[1]),
       {
         sourcePlaces: text(practice.scenario.sourcePlaces[0], practice.scenario.sourcePlaces[1]),
-        destinationPlaces: text(practice.scenario.destinationPlaces[0], practice.scenario.destinationPlaces[1])
+        destinationPlaces: text(practice.scenario.destinationPlaces[0], practice.scenario.destinationPlaces[1]),
+        rowCount: practice.supply.length,
+        colCount: practice.demand.length
       }
     );
   }
@@ -1048,6 +1185,9 @@
       saveProgress();
     }
     saveCompletedProblem(practice.solveDurationMs);
+    window.dispatchEvent(new CustomEvent('tp-practice-completed', {
+      detail: { kind: 'lcm', difficulty: level, durationMs: practice.solveDurationMs }
+    }));
     completedCurrent = true;
     updateProgressUi();
     renderPoints();
@@ -1318,6 +1458,17 @@
 
   function init() {
     window.getPracticeTPSolverContext = getPracticeTPSolverContext;
+    // Small public API so the extra practice activities can award points to the same balance.
+    window.tpPractice = {
+      addPoints(amount) {
+        const safe = Math.max(0, Math.floor(Number(amount) || 0));
+        points += safe;
+        savePoints();
+        renderPoints();
+        return points;
+      },
+      getPoints() { return points; }
+    };
     language = $('#languageSelect').value || 'en';
     $('#practiceGenerate').addEventListener('click', generate);
     $('#practiceCurrency').value = loadCurrency();

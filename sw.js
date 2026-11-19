@@ -1,7 +1,7 @@
 'use strict';
 
 // Bump this version whenever you deploy changes so installed apps pick up the new files.
-const CACHE = 'tp-solver-v3';
+const CACHE = 'tp-solver-v6';
 
 const APP_SHELL = [
   './',
@@ -10,7 +10,9 @@ const APP_SHELL = [
   'lcm.js',
   'app.js',
   'practice.js',
+  'practice-extra.js',
   'install.js',
+  'buddy-theme.js',
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',
@@ -24,7 +26,8 @@ const CACHEABLE_CDNS = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com'];
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE)
-      .then((cache) => cache.addAll(APP_SHELL))
+      // Fetch straight from the network (skip the browser's HTTP cache) so a new version never stores old files.
+      .then((cache) => cache.addAll(APP_SHELL.map((path) => new Request(path, { cache: 'reload' }))))
       .then(() => self.skipWaiting())
   );
 });
@@ -46,21 +49,25 @@ self.addEventListener('fetch', (event) => {
   // Anything else (for example the Noupe chat assistant) goes straight to the network.
   if (!sameOrigin && !CACHEABLE_CDNS.includes(url.hostname)) return;
 
-  // Pages: network first so students get updates, fall back to the cached app when offline.
-  if (request.mode === 'navigate') {
+  if (sameOrigin) {
+    // The app's own files: always try the network first (revalidating, so a new deploy shows
+    // immediately and pages never mix old and new files). Use the saved copy only when offline.
+    const key = request.mode === 'navigate' ? 'index.html' : request;
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'no-cache' })
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put('index.html', copy));
+          if (response && response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(key, copy));
+          }
           return response;
         })
-        .catch(() => caches.match('index.html').then((cached) => cached || caches.match('./')))
+        .catch(() => caches.match(key).then((cached) => cached || caches.match('index.html')))
     );
     return;
   }
 
-  // Everything else: serve from cache immediately, refresh it in the background.
+  // Third-party libraries (Bootstrap, html2pdf): they rarely change, so serve the saved copy first.
   event.respondWith(
     caches.match(request).then((cached) => {
       const refresh = fetch(request)

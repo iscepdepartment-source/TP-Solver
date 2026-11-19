@@ -229,6 +229,162 @@
       <span class="small text-muted" data-practice-text="pointsRewardHelp">Earn 10 points for each correctly completed problem.</span>
     </div>
 
+
+    <div class="panel mb-3" id="progressPanel">
+      <div class="panel-head"><h2 class="h5 mb-0" data-extra-text="progressTitle">My Progress</h2></div>
+      <p class="small text-muted" data-extra-text="progressHelp">Every finished practice activity is saved on this device and drawn on the graph so you can see yourself improving.</p>
+      <div class="tp-stats" id="progressStats"></div>
+      <div class="row g-2 align-items-end mb-2">
+        <div class="col-12 col-sm-6 col-md-4">
+          <label class="form-label small mb-1" for="progressMetric" data-extra-text="metricLabel">Show</label>
+          <select class="form-select form-select-sm" id="progressMetric">
+            <option value="daily" data-extra-option="metricDaily">Activities per day (last 14 days)</option>
+            <option value="time" data-extra-option="metricTime">Solve time per activity</option>
+            <option value="score" data-extra-option="metricScore">Score per activity</option>
+          </select>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <label class="form-label small mb-1" for="progressFilter" data-extra-text="filterLabel">Activity type</label>
+          <select class="form-select form-select-sm" id="progressFilter">
+            <option value="all" data-extra-option="filterAll">All activities</option>
+            <option value="lcm" data-extra-option="filterLcm">Full LCM problems</option>
+            <option value="guided" data-extra-option="filterGuided">Guided problems</option>
+            <option value="quiz" data-extra-option="filterQuiz">Quick quizzes</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-auto">
+          <button type="button" class="btn btn-outline-secondary btn-sm" id="progressTableToggle" data-mode="chart" data-extra-text="showTable">Show as table</button>
+        </div>
+      </div>
+      <p class="small text-muted mb-0" id="progressEmpty" hidden></p>
+      <div class="tp-chart" id="progressChartWrap">
+        <svg id="progressChart" class="tp-chart-svg" role="img" viewBox="0 0 640 270" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="tp-chart-tip" id="progressTip" hidden></div>
+      </div>
+      <div class="tp-legend" id="progressLegend" hidden></div>
+      <div class="table-responsive" id="progressTableWrap" hidden>
+        <table class="table table-sm table-bordered align-middle text-center mb-0" id="progressTable"></table>
+      </div>
+    </div>
+
+    <div class="panel mb-3" id="extraPracticePanel">
+      <div class="panel-head"><h2 class="h5 mb-0" data-extra-text="moreTitle">More Ways to Practice</h2></div>
+      <div class="d-flex flex-wrap gap-2 mb-3" role="tablist">
+        <button type="button" class="btn btn-outline-primary tp-tab active" role="tab" aria-selected="true" data-extra-tab="guided" data-extra-text="tabGuided">Guided problems</button>
+        <button type="button" class="btn btn-outline-primary tp-tab" role="tab" aria-selected="false" data-extra-tab="quiz" data-extra-text="tabQuiz">Quick quiz</button>
+      </div>
+
+      <div id="guidedTab" role="tabpanel">
+        <p class="small text-muted" data-extra-text="guidedHelp">The matrix is already partly (or completely) filled in for you. You only enter the missing numbers or the final answer.</p>
+        <div class="row g-3 align-items-end mb-3">
+          <div class="col-12 col-sm-6 col-md-4">
+            <label class="form-label" for="guidedKind" data-extra-text="guidedKind">Activity</label>
+            <select class="form-select" id="guidedKind">
+              <option value="fill" data-extra-option="guidedKindFill">Fill in the blanks</option>
+              <option value="total" data-extra-option="guidedKindTotal">Find the total cost</option>
+            </select>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4">
+            <label class="form-label" for="guidedLevel" data-extra-text="guidedLevel">Difficulty</label>
+            <select class="form-select" id="guidedLevel">
+              <option value="easy" data-extra-option="easyName">Easy</option>
+              <option value="medium" data-extra-option="mediumName">Medium</option>
+              <option value="hard" data-extra-option="hardName">Hard</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-4">
+            <button type="button" class="btn btn-primary" id="guidedNew"><i class="bi bi-shuffle"></i> <span data-extra-text="guidedNew">New guided problem</span></button>
+          </div>
+        </div>
+        <div id="guidedArea" hidden>
+          <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+            <span class="badge text-bg-primary" id="guidedBadge"></span>
+            <span class="small text-muted" id="guidedPointsInfo"></span>
+          </div>
+          <div class="alert alert-light border small py-2" id="guidedTask"></div>
+          <div class="table-responsive">
+            <table class="table table-bordered matrix-input text-center align-middle practice-matrix tp-guided-matrix" id="guidedMatrix"></table>
+          </div>
+          <div class="row g-2 align-items-end mt-1" id="guidedTotalRow" hidden>
+            <div class="col-12 col-sm-7 col-md-5">
+              <label for="guidedTotalInput" class="form-label small mb-1" data-extra-text="totalLabel">Total least cost</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text" id="guidedCostSign" aria-hidden="true">$</span>
+                <input id="guidedTotalInput" class="form-control" type="number" step="any" inputmode="decimal" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <div id="guidedSteps" class="mt-3" hidden></div>
+          <div class="d-flex flex-wrap gap-2 mt-3">
+            <button type="button" class="btn btn-success" id="guidedCheck"><i class="bi bi-check2-circle"></i> <span data-extra-text="check">Check my answer</span></button>
+            <button type="button" class="btn btn-outline-primary" id="guidedHint"><i class="bi bi-lightbulb"></i> <span data-extra-text="hint">Hint</span></button>
+            <button type="button" class="btn btn-outline-secondary" id="guidedShowSteps" data-extra-text="showSteps">Show step-by-step products</button>
+          </div>
+          <div id="guidedFeedback" class="alert mt-3 mb-0" role="status" aria-live="polite" hidden></div>
+          <div id="guidedDone" class="practice-celebration mt-3" role="status" aria-live="polite" hidden>
+            <div class="practice-confetti" aria-hidden="true"><span>★</span><span>✦</span><span>★</span><span>✦</span><span>★</span></div>
+            <h3 class="h5 mb-1" id="guidedDoneTitle"></h3>
+            <p class="mb-1" id="guidedDoneMessage"></p>
+            <p class="small mb-3" id="guidedDonePoints"></p>
+            <button type="button" class="btn btn-primary" id="guidedDoneNext"><i class="bi bi-arrow-right-circle"></i> <span data-extra-text="guidedNext">Next guided problem</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="quizTab" role="tabpanel" hidden>
+        <p class="small text-muted" data-extra-text="quizHelp">Answer 5 quick questions about the Least Cost Method.</p>
+        <div class="row g-3 align-items-end mb-3">
+          <div class="col-12 col-sm-6 col-md-4">
+            <label class="form-label" for="quizMode" data-extra-text="quizMode">Questions</label>
+            <select class="form-select" id="quizMode">
+              <option value="mixed" data-extra-option="quizModeMixed">Mixed</option>
+              <option value="calc" data-extra-option="quizModeCalc">Calculations only</option>
+              <option value="concept" data-extra-option="quizModeConcept">Concepts only</option>
+            </select>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4">
+            <button type="button" class="btn btn-primary" id="quizStart"><i class="bi bi-play-circle"></i> <span data-extra-text="quizStart">Start quiz</span></button>
+          </div>
+        </div>
+        <div id="quizArea" hidden>
+          <div class="d-flex flex-wrap justify-content-between gap-2 mb-1">
+            <span class="badge text-bg-primary" id="quizProgressText"></span>
+            <span class="badge text-bg-warning" id="quizScoreText"></span>
+          </div>
+          <div class="progress mb-3" role="presentation"><div class="progress-bar" id="quizProgressBar" style="width: 0%"></div></div>
+          <div id="quizQuestionBox">
+            <p class="fw-semibold mb-2" id="quizPrompt"></p>
+            <div class="table-responsive" id="quizTableWrap" hidden>
+              <table class="table table-bordered text-center align-middle practice-matrix tp-quiz-table" id="quizTable"></table>
+            </div>
+            <div class="d-grid gap-2" id="quizOptions"></div>
+            <div class="row g-2 align-items-end" id="quizNumeric" hidden>
+              <div class="col-12 col-sm-7 col-md-5">
+                <label for="quizNumberInput" class="form-label small mb-1" data-extra-text="quizNumberLabel">Your answer</label>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text" id="quizNumberSign" aria-hidden="true" hidden>$</span>
+                  <input id="quizNumberInput" class="form-control" type="number" step="any" inputmode="decimal" autocomplete="off">
+                </div>
+              </div>
+              <div class="col-12 col-sm-auto">
+                <button type="button" class="btn btn-success btn-sm" id="quizSubmit" data-extra-text="quizSubmit">Submit answer</button>
+              </div>
+            </div>
+            <div id="quizFeedback" class="alert mt-3 mb-0" role="status" aria-live="polite" hidden></div>
+            <button type="button" class="btn btn-primary mt-3" id="quizNext" hidden></button>
+          </div>
+          <div id="quizResult" class="practice-celebration mt-2" role="status" aria-live="polite" hidden>
+            <div class="practice-confetti" aria-hidden="true"><span>★</span><span>✦</span><span>★</span><span>✦</span><span>★</span></div>
+            <h3 class="h5 mb-1" id="quizResultTitle"></h3>
+            <p class="mb-1" id="quizResultScore"></p>
+            <p class="mb-1" id="quizResultNote"></p>
+            <p class="small mb-3" id="quizResultPoints"></p>
+            <button type="button" class="btn btn-primary" id="quizAgain"><i class="bi bi-arrow-repeat"></i> <span data-extra-text="quizAgain">Try another round</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="panel mb-3">
       <div class="panel-head">
         <h2 class="h5 mb-0" data-practice-text="reviewHistoryTitle">Completed Problems</h2>
@@ -468,6 +624,7 @@
 <script src="lcm.js"></script>
 <script src="app.js"></script>
 <script src="practice.js"></script>
+<script src="practice-extra.js"></script>
 <script src="install.js"></script>
 <script>
   (function () {
@@ -492,5 +649,6 @@
 </script>
 
 <script src='https://www.noupe.com/embed/01a1ecc50bb87000892cdfa5bdd40705f197.js'></script>
+<script src="buddy-theme.js"></script>
 </body>
 </html>
