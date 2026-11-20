@@ -40,6 +40,11 @@
     themeLight: ['Light mode', 'Light mode'],
     sidebarFoot: ['Operations Research<br>Initial Feasible Solution', 'Pananaliksik sa Operasyon<br>Paunang Posibleng Solusyon'],
     language: ['Language', 'Wika'],
+    menuLabel: ['Menu', 'Menu'],
+    menuOpenLabel: ['Open navigation menu', 'Buksan ang menu ng nabigasyon'],
+    menuCloseLabel: ['Close menu', 'Isara ang menu'],
+    footerRights: ['All rights reserved.', 'Reserbado ang lahat ng karapatan.'],
+    footerCredit: ['This web app system is created by <strong>Mark Ryan Talento</strong> for students learning the Least Cost Method of the transportation problem (Operations Research).', 'Ang web app system na ito ay nilikha ni <strong>Mark Ryan Talento</strong> para sa mga estudyanteng nag-aaral ng Least Cost Method ng transportation problem (Operations Research).'],
     problemsSolved: ['Total Problems Solved', 'Kabuuang Problemang Nasagot'],
     sourcesLast: ['Sources (last problem)', 'Mga Pinagmulan (huling problema)'],
     destinationsLast: ['Destinations (last problem)', 'Mga Destinasyon (huling problema)'],
@@ -267,6 +272,24 @@
   }
 
 
+  function setMenu(open, options) {
+    const sidebar = $('#sidebar');
+    const toggle = $('#menuToggle');
+    const backdrop = $('#sidebarBackdrop');
+    if (!sidebar || !toggle) return;
+    const wasOpen = sidebar.classList.contains('open');
+    sidebar.classList.toggle('open', open);
+    if (backdrop) backdrop.classList.toggle('show', open);
+    document.body.classList.toggle('menu-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    if (open && !wasOpen) {
+      const close = $('#sidebarClose');
+      if (close) close.focus({ preventScroll: true });
+    } else if (!open && wasOpen && options && options.returnFocus) {
+      toggle.focus({ preventScroll: true });
+    }
+  }
+
   function showView(name) {
     $$('.view').forEach((v) => v.classList.add('d-none'));
     $('#view-' + name).classList.remove('d-none');
@@ -278,8 +301,7 @@
       results: staticText('results'),
       about: staticText('about')
     })[name];
-    $('#sidebar').classList.remove('open');
-    $('#menuToggle').setAttribute('aria-expanded', 'false');
+    setMenu(false);
     window.dispatchEvent(new CustomEvent('transportation-view-changed', { detail: { view: name } }));
     if (name === 'dashboard') renderDashboard();
     window.scrollTo(0, 0);
@@ -308,6 +330,58 @@
     let launcherMoved = false;
     let lastVisibleRect = null;
     let lastExpandedRect = null;
+
+    // The calculator must always stay where a finger can reach it: inside the screen, below the
+    // iPhone status bar / notch, above the home bar, and below the install banner.
+    const EDGE = 8;
+    const probe = document.createElement('div');
+    probe.setAttribute('aria-hidden', 'true');
+    probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;pointer-events:none;' +
+      'padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)';
+    document.body.appendChild(probe);
+    const clamp = (value, min, max) => Math.max(min, Math.min(value, Math.max(min, max)));
+    const bounds = () => {
+      const inset = getComputedStyle(probe);
+      const top = parseFloat(inset.paddingTop) || 0;
+      const right = parseFloat(inset.paddingRight) || 0;
+      const bottom = parseFloat(inset.paddingBottom) || 0;
+      const left = parseFloat(inset.paddingLeft) || 0;
+      const banner = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--install-banner-h')) || 0;
+      const bar = document.querySelector('#mobileBar');
+      const barHeight = bar && bar.offsetParent !== null ? bar.offsetHeight : 0;
+      return {
+        left: left + EDGE,
+        right: window.innerWidth - right - EDGE,
+        top: Math.max(top, banner) + barHeight + EDGE,
+        bottom: window.innerHeight - bottom - EDGE
+      };
+    };
+    const refitPanel = () => {
+      if (panel.hidden) return;
+      const b = bounds();
+      const rect = panel.getBoundingClientRect();
+      const minimized = panel.classList.contains('is-minimized');
+      const width = Math.min(rect.width, Math.max(120, b.right - b.left));
+      const height = Math.min(rect.height, Math.max(120, b.bottom - b.top));
+      const left = clamp(rect.left, b.left, b.right - width);
+      const top = clamp(rect.top, b.top, b.bottom - height);
+      const moved = Math.abs(left - rect.left) > 0.5 || Math.abs(top - rect.top) > 0.5;
+      const smaller = width < rect.width - 0.5 || height < rect.height - 0.5;
+      if (!moved && !smaller) return;
+      if (width < rect.width - 0.5) panel.style.width = width + 'px';
+      if (!minimized && height < rect.height - 0.5) panel.style.height = height + 'px';
+      panel.style.left = left + 'px';
+      panel.style.top = top + 'px';
+      panel.style.right = 'auto';
+      panel.style.bottom = 'auto';
+    };
+    const refitLauncher = () => {
+      if (!launcher.style.left || !launcher.style.top) return;
+      const b = bounds();
+      const size = launcher.offsetWidth || 54;
+      launcher.style.left = clamp(parseFloat(launcher.style.left), b.left, b.right - size) + 'px';
+      launcher.style.top = clamp(parseFloat(launcher.style.top), b.top, b.bottom - size) + 'px';
+    };
 
     const readLayout = () => {
       try {
@@ -507,26 +581,32 @@
       };
       lastExpandedRect = lastVisibleRect;
     }
-    panel.hidden = saved.closed === true;
+    // First visit on a phone or tablet: start with only the small calculator button, not an open panel
+    // that covers the menu and the page.
+    const startClosed = saved.closed === true ||
+      (saved.closed === undefined && window.matchMedia('(max-width: 991.98px)').matches);
+    panel.hidden = startClosed;
     launcher.hidden = !panel.hidden;
     panel.classList.toggle('is-minimized', saved.minimized === true);
-    if (Number.isFinite(saved.width)) panel.style.width = Math.max(260, Math.min(saved.width, window.innerWidth - 16)) + 'px';
-    if (Number.isFinite(saved.height)) panel.style.height = Math.max(300, Math.min(saved.height, window.innerHeight - 16)) + 'px';
+    if (Number.isFinite(saved.width)) panel.style.width = saved.width + 'px';
+    if (Number.isFinite(saved.height)) panel.style.height = saved.height + 'px';
     if (Number.isFinite(saved.left) && Number.isFinite(saved.top)) {
-      const width = Number.isFinite(saved.width) ? saved.width : 320;
-      const height = Number.isFinite(saved.height) ? saved.height : 420;
-      panel.style.left = Math.max(0, Math.min(saved.left, window.innerWidth - width)) + 'px';
-      panel.style.top = Math.max(0, Math.min(saved.top, window.innerHeight - height)) + 'px';
+      panel.style.left = saved.left + 'px';
+      panel.style.top = saved.top + 'px';
       panel.style.right = 'auto';
       panel.style.bottom = 'auto';
     }
     setMinimized(saved.minimized === true);
     if (Number.isFinite(saved.launcherLeft) && Number.isFinite(saved.launcherTop)) {
-      launcher.style.left = Math.max(0, Math.min(saved.launcherLeft, window.innerWidth - 54)) + 'px';
-      launcher.style.top = Math.max(0, Math.min(saved.launcherTop, window.innerHeight - 54)) + 'px';
+      launcher.style.left = saved.launcherLeft + 'px';
+      launcher.style.top = saved.launcherTop + 'px';
       launcher.style.right = 'auto';
       launcher.style.bottom = 'auto';
     }
+    // An old saved position (for example one dragged under the iPhone status bar) is pulled back on screen.
+    refitPanel();
+    refitLauncher();
+    saveLayout();
 
     panel.addEventListener('click', (event) => {
       const button = event.target.closest('button');
@@ -550,8 +630,9 @@
       panel.hidden = false;
       launcher.hidden = true;
       if (panel.classList.contains('is-minimized')) setMinimized(false);
+      refitPanel();
       saveLayout();
-      $('#calculatorMinimize').focus();
+      $('#calculatorMinimize').focus({ preventScroll: true });
     });
     launcher.addEventListener('pointerdown', (event) => {
       if (event.button !== 0) return;
@@ -563,8 +644,9 @@
     });
     launcher.addEventListener('pointermove', (event) => {
       if (!launcherDrag || launcherDrag.pointerId !== event.pointerId) return;
-      const left = Math.max(0, Math.min(event.clientX - launcherDrag.x, window.innerWidth - launcher.offsetWidth));
-      const top = Math.max(0, Math.min(event.clientY - launcherDrag.y, window.innerHeight - launcher.offsetHeight));
+      const b = bounds();
+      const left = clamp(event.clientX - launcherDrag.x, b.left, b.right - launcher.offsetWidth);
+      const top = clamp(event.clientY - launcherDrag.y, b.top, b.bottom - launcher.offsetHeight);
       if (Math.abs(left - launcher.getBoundingClientRect().left) > 2 ||
           Math.abs(top - launcher.getBoundingClientRect().top) > 2) launcherMoved = true;
       launcher.style.left = left + 'px';
@@ -581,6 +663,7 @@
     launcher.addEventListener('pointercancel', finishLauncherDrag);
     $('#calculatorMinimize').addEventListener('click', () => {
       setMinimized(!panel.classList.contains('is-minimized'));
+      refitPanel();
     });
 
     header.addEventListener('pointerdown', (event) => {
@@ -596,10 +679,9 @@
     });
     header.addEventListener('pointermove', (event) => {
       if (!drag || drag.pointerId !== event.pointerId) return;
-      const maxLeft = Math.max(0, window.innerWidth - panel.offsetWidth);
-      const maxTop = Math.max(0, window.innerHeight - panel.offsetHeight);
-      panel.style.left = Math.max(0, Math.min(event.clientX - drag.x, maxLeft)) + 'px';
-      panel.style.top = Math.max(0, Math.min(event.clientY - drag.y, maxTop)) + 'px';
+      const b = bounds();
+      panel.style.left = clamp(event.clientX - drag.x, b.left, b.right - panel.offsetWidth) + 'px';
+      panel.style.top = clamp(event.clientY - drag.y, b.top, b.bottom - panel.offsetHeight) + 'px';
     });
     const finishDrag = (event) => {
       if (!drag || drag.pointerId !== event.pointerId) return;
@@ -627,15 +709,16 @@
     });
     resizeHandle.addEventListener('pointermove', (event) => {
       if (!resizeDrag || resizeDrag.pointerId !== event.pointerId) return;
-      const minWidth = Math.min(260, window.innerWidth - 16);
-      const minHeight = Math.min(320, window.innerHeight - 100);
+      const b = bounds();
+      const minWidth = Math.min(260, b.right - b.left);
+      const minHeight = Math.min(300, b.bottom - b.top);
       const width = Math.max(minWidth, Math.min(
         resizeDrag.width + event.clientX - resizeDrag.x,
-        window.innerWidth - parseFloat(panel.style.left) - 8
+        b.right - parseFloat(panel.style.left)
       ));
       const height = Math.max(minHeight, Math.min(
         resizeDrag.height + event.clientY - resizeDrag.y,
-        window.innerHeight - parseFloat(panel.style.top) - 16
+        b.bottom - parseFloat(panel.style.top)
       ));
       panel.style.width = width + 'px';
       panel.style.height = height + 'px';
@@ -652,8 +735,9 @@
       const rect = panel.getBoundingClientRect();
       const width = rect.width + (event.key === 'ArrowRight' ? 16 : event.key === 'ArrowLeft' ? -16 : 0);
       const height = rect.height + (event.key === 'ArrowDown' ? 16 : event.key === 'ArrowUp' ? -16 : 0);
-      panel.style.width = Math.max(Math.min(260, window.innerWidth - 16), Math.min(width, window.innerWidth - rect.left - 8)) + 'px';
-      panel.style.height = Math.max(Math.min(320, window.innerHeight - 100), Math.min(height, window.innerHeight - rect.top - 16)) + 'px';
+      const b = bounds();
+      panel.style.width = Math.max(Math.min(260, b.right - b.left), Math.min(width, b.right - rect.left)) + 'px';
+      panel.style.height = Math.max(Math.min(300, b.bottom - b.top), Math.min(height, b.bottom - rect.top)) + 'px';
       event.preventDefault();
       saveLayout();
     });
@@ -673,20 +757,16 @@
       else return;
       event.preventDefault();
     });
-    window.addEventListener('resize', () => {
-      const rect = panel.getBoundingClientRect();
-      if (panel.style.left) panel.style.left = Math.max(0, Math.min(rect.left, window.innerWidth - panel.offsetWidth)) + 'px';
-      if (panel.style.top) panel.style.top = Math.max(0, Math.min(rect.top, window.innerHeight - panel.offsetHeight)) + 'px';
-      if (launcher.style.left) launcher.style.left = Math.max(0, Math.min(
-        launcher.getBoundingClientRect().left,
-        window.innerWidth - launcher.offsetWidth
-      )) + 'px';
-      if (launcher.style.top) launcher.style.top = Math.max(0, Math.min(
-        launcher.getBoundingClientRect().top,
-        window.innerHeight - launcher.offsetHeight
-      )) + 'px';
+    const refitAll = () => {
+      refitPanel();
+      refitLauncher();
       saveLayout();
-    });
+    };
+    window.addEventListener('resize', refitAll);
+    window.addEventListener('orientationchange', () => window.setTimeout(refitAll, 250));
+    window.addEventListener('tp-layout-changed', refitAll);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', refitAll);
+    window.addEventListener('pageshow', refitAll);
     if (window.ResizeObserver) new ResizeObserver(saveLayout).observe(panel);
   }
 
@@ -1398,10 +1478,30 @@
       showView(a.dataset.view);
     }));
     $$('[data-goto]').forEach((b) => b.addEventListener('click', () => showView(b.dataset.goto)));
-    $('#menuToggle').addEventListener('click', () => {
-      const isOpen = $('#sidebar').classList.toggle('open');
-      $('#menuToggle').setAttribute('aria-expanded', String(isOpen));
+    const sidebar = $('#sidebar');
+    const menuIsOpen = () => sidebar.classList.contains('open');
+    $('#menuToggle').addEventListener('click', () => setMenu(!menuIsOpen()));
+    $('#sidebarClose').addEventListener('click', () => setMenu(false, { returnFocus: true }));
+    $('#sidebarBackdrop').addEventListener('click', () => setMenu(false, { returnFocus: true }));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && menuIsOpen()) setMenu(false, { returnFocus: true });
     });
+    let swipeStart = null;
+    sidebar.addEventListener('touchstart', (event) => {
+      const touch = event.touches[0];
+      swipeStart = touch ? { x: touch.clientX, y: touch.clientY } : null;
+    }, { passive: true });
+    sidebar.addEventListener('touchend', (event) => {
+      const touch = event.changedTouches[0];
+      if (swipeStart && touch && touch.clientX - swipeStart.x < -60 && Math.abs(touch.clientY - swipeStart.y) < 60) setMenu(false);
+      swipeStart = null;
+    }, { passive: true });
+    const desktopQuery = window.matchMedia('(min-width: 992px)');
+    const closeOnDesktop = () => { if (desktopQuery.matches) setMenu(false); };
+    if (desktopQuery.addEventListener) desktopQuery.addEventListener('change', closeOnDesktop);
+    else if (desktopQuery.addListener) desktopQuery.addListener(closeOnDesktop);
+    const footerYear = $('#footerYear');
+    if (footerYear) footerYear.textContent = String(new Date().getFullYear());
     $('#themeToggle').addEventListener('click', () => setTheme(theme === 'dark' ? 'light' : 'dark'));
 
     $('#btnNewProblem').addEventListener('click', () => { buildMatrix(); showView('input'); });

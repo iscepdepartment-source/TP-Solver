@@ -1,7 +1,7 @@
 'use strict';
 
 // Bump this version whenever you deploy changes so installed apps pick up the new files.
-const CACHE = 'tp-solver-v6';
+const CACHE = 'tp-solver-v7';
 
 const APP_SHELL = [
   './',

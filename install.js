@@ -30,6 +30,7 @@
   function updateOffset() {
     document.documentElement.style.setProperty(
       '--install-banner-h', banner && !banner.hidden ? banner.offsetHeight + 'px' : '0px');
+    window.dispatchEvent(new Event('tp-layout-changed'));
   }
 
   function showBanner() {

@@ -23,9 +23,16 @@ The chat assistant is a [Noupe](https://www.noupe.com/) embed. It is loaded by a
 TP Solver can be installed on a phone, tablet, or computer from a dark-blue banner at the top of the page.
 
 - `manifest.webmanifest` + `icons/` describe the app (name, colors, icons).
-- `sw.js` is the service worker. It caches the app so it opens offline. **Change the `CACHE = 'tp-solver-vN'` number (v6 -> v7, ...) every time you publish changes**, otherwise installed copies may keep showing old files.
+- `sw.js` is the service worker. It caches the app so it opens offline. **Change the `CACHE = 'tp-solver-vN'` number (v7 -> v8, ...) every time you publish changes**, otherwise installed copies may keep showing old files.
 - `install.js` shows the banner. Chrome/Edge/Android get a one-tap **Install** button; iPhone/iPad Safari shows "Share -> Add to Home Screen" steps because Apple does not allow one-tap install. After the user taps the **×**, the banner stays hidden for 7 days.
 - Installing needs HTTPS (GitHub Pages is fine) or `localhost`. All paths are relative, so it also works from a repo sub-path such as `https://<user>.github.io/<repo>/`.
+
+## Phones, tablets and the installed app
+
+- **Menu:** on screens narrower than 992px the menu opens from a sticky **Menu** bar that stays at the top while scrolling. The menu has a close **x**, and also closes when you tap outside it, press Escape, swipe it left, or choose a page. The icons are inline SVG, so the buttons never go blank if the icon font has not loaded.
+- **iPhone notch and home bar:** the layout uses `env(safe-area-inset-*)` and `viewport-fit=cover`, so nothing sits under the status bar or the home indicator when the app is installed. A dark-blue strip is drawn behind the status bar so the clock and battery stay readable.
+- **Calculator:** it can no longer be dragged or saved where it cannot be tapped. It stays inside the safe screen, below the status bar, install banner and menu bar, and is pulled back on screen after a rotation or if an old saved position was off-limits. On phones and tablets it starts closed (just the small button).
+- **Footer:** shows "All rights reserved" and the creator credit, in English, Tagalog and Taglish. Edit the texts `footerRights` and `footerCredit` in `app.js`.
 
 ## Practice Mode extras
 

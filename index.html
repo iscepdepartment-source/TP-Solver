@@ -46,6 +46,9 @@
       <div class="brand-title">TP Solver</div>
       <div class="brand-sub" data-i18n="method">Least Cost Method</div>
     </div>
+    <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close menu" data-i18n-aria-label="menuCloseLabel">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+    </button>
   </div>
   <nav class="nav flex-column">
     <a class="nav-link active" href="#" data-view="dashboard"><i class="bi bi-speedometer2"></i> <span data-i18n="dashboard">Dashboard</span></a>
@@ -56,11 +59,18 @@
   </nav>
   <div class="sidebar-foot" data-i18n="sidebarFoot">Operations Research<br>Initial Feasible Solution</div>
 </aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
 
 <main class="content">
+  <div class="mobile-bar d-print-none" id="mobileBar">
+    <button class="mobile-bar-menu" id="menuToggle" type="button" aria-label="Open navigation menu" data-i18n-aria-label="menuOpenLabel" aria-controls="sidebar" aria-expanded="false">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+      <span data-i18n="menuLabel">Menu</span>
+    </button>
+    <span class="mobile-bar-brand">TP Solver</span>
+  </div>
   <header class="topbar d-print-none">
-    <button class="btn btn-outline-primary btn-sm d-lg-none" id="menuToggle" type="button" aria-label="Open navigation menu" aria-controls="sidebar" aria-expanded="false"><i class="bi bi-list" aria-hidden="true"></i></button>
     <h1 class="page-title" id="pageTitle">Dashboard</h1>
     <button class="btn btn-outline-primary btn-sm ms-auto" id="themeToggle" type="button" aria-pressed="false">
       <i class="bi bi-moon-stars" aria-hidden="true"></i>
@@ -561,8 +571,10 @@
     </div>
   </section>
 
-  <footer class="app-footer small text-muted" data-i18n="footerAI">
-    The solver and suggested explanations work offline. TP Buddy requires an internet connection.
+  <footer class="app-footer small text-muted">
+    <p class="mb-1" data-i18n="footerAI">The solver works offline. The TP Buddy assistant requires an internet connection.</p>
+    <p class="app-footer-rights mb-1">&copy; <span id="footerYear">2026</span> TP-Solver. <span data-i18n="footerRights">All rights reserved.</span></p>
+    <p class="mb-0" data-i18n="footerCredit">This web app system is created by <strong>Mark Ryan Talento</strong> for students learning the Least Cost Method of the transportation problem (Operations Research).</p>
   </footer>
 </main>
 
